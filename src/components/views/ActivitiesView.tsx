@@ -12,6 +12,7 @@ import { ExportCsvButton } from "@/components/ExportCsvButton";
 import { CrmLink } from "@/components/CrmLink";
 import { formatPlDateTime } from "@/lib/dates";
 import type { Activity } from "@/types/domain";
+import { leadHref } from "@/lib/paths";
 import {
   ACTIVITY_RESULT_LABELS,
   ACTIVITY_STATUS_LABELS,
@@ -59,7 +60,7 @@ export function ActivitiesView({ data }: { data: AppData }) {
         header: "Kontakt",
         cell: ({ row }) => (
           <Link
-            href={`/leads/${row.original.leadId}`}
+            href={leadHref(row.original.leadId)}
             className="font-medium text-slate-900 hover:underline"
             onClick={(e) => e.stopPropagation()}
           >

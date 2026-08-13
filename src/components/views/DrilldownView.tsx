@@ -11,6 +11,7 @@ import { DataTable } from "@/components/DataTable";
 import { ExportCsvButton } from "@/components/ExportCsvButton";
 import { CrmLink } from "@/components/CrmLink";
 import { formatPlDateTime } from "@/lib/dates";
+import { leadHref } from "@/lib/paths";
 import {
   ACTIVITY_STATUS_LABELS,
   ACTIVITY_TYPE_LABELS,
@@ -73,7 +74,7 @@ export function DrilldownView({
         header: "Kontakt",
         cell: ({ row }) => (
           <Link
-            href={`/leads/${row.original.id}`}
+            href={leadHref(row.original.id)}
             className="font-medium hover:underline"
           >
             {row.original.companyName}
@@ -112,7 +113,7 @@ export function DrilldownView({
         header: "Kontakt",
         cell: ({ row }) => (
           <Link
-            href={`/leads/${row.original.leadId}`}
+            href={leadHref(row.original.leadId)}
             className="font-medium hover:underline"
           >
             {data.leads.find((l) => l.id === row.original.leadId)?.companyName ??

@@ -1,4 +1,5 @@
 import { hoursBetween, parseDate, startOfWeekMonday, toISODate } from "@/lib/dates";
+import { leadHref, salespersonHref } from "@/lib/paths";
 import type {
   Activity,
   DrilldownType,
@@ -139,7 +140,7 @@ export function buildAlerts(
         id: `sp-overdue-${sp.id}`,
         message: `Handlowiec ${sp.firstName} ${sp.lastName} ma ${overdue} wydarzeń po terminie`,
         severity: "danger",
-        href: `/salespeople/${sp.id}`,
+        href: salespersonHref(sp.id),
       });
     }
   }
@@ -156,7 +157,7 @@ export function buildAlerts(
       id: `multi-${a.id}`,
       message: `Spotkanie z firmą ${lead.companyName} było przekładane ${a.rescheduleCount} razy`,
       severity: "warning",
-      href: `/leads/${lead.id}`,
+      href: leadHref(lead.id),
     });
   }
 

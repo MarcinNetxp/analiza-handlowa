@@ -8,6 +8,7 @@ import type { AppData } from "@/lib/data/load";
 import { computeSalespersonRows, type SalespersonRow } from "@/lib/analytics/kpi";
 import { DataTable } from "@/components/DataTable";
 import { ExportCsvButton } from "@/components/ExportCsvButton";
+import { salespersonHref } from "@/lib/paths";
 import { formatPercent } from "@/lib/utils";
 
 export function SalespeopleView({ data }: { data: AppData }) {
@@ -109,7 +110,7 @@ export function SalespeopleView({ data }: { data: AppData }) {
       <DataTable
         data={rows}
         columns={columns}
-        onRowClick={(row) => router.push(`/salespeople/${row.salesperson.id}`)}
+        onRowClick={(row) => router.push(salespersonHref(row.salesperson.id))}
       />
     </div>
   );
