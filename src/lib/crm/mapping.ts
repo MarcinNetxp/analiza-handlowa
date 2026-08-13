@@ -102,6 +102,12 @@ const RESULT_MAP: Record<string, ActivityResult> = {
   wrong_contact: "wrong_contact",
   "lead zdyskwalifikowany": "lead_disqualified",
   lead_disqualified: "lead_disqualified",
+  "konkurencja była pierwsza": "competitor_first",
+  konkurencja_byla_pierwsza: "competitor_first",
+  competitor_first: "competitor_first",
+  "oferta nie spełnia oczekiwań finansowych": "offer_price_mismatch",
+  oferta_nie_spelnia_oczekiwan_finansowych: "offer_price_mismatch",
+  offer_price_mismatch: "offer_price_mismatch",
   inny: "other",
   other: "other",
 };

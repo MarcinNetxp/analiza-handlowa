@@ -92,7 +92,7 @@ export function DashboardView({ data }: { data: AppData }) {
           value={kpis.noNextStep}
           href="/drilldown?type=no_next_step"
           tone={kpis.noNextStep > 0 ? "danger" : "ok"}
-          hint="Kluczowy KPI procesu"
+          hint="Bez planu ≥3 dni po wykonaniu (poza wynikami zamykającymi)"
         />
       </div>
 

@@ -28,6 +28,8 @@ export const ACTIVITY_RESULTS = [
   "no_interest",
   "wrong_contact",
   "lead_disqualified",
+  "competitor_first",
+  "offer_price_mismatch",
   "other",
 ] as const;
 export type ActivityResult = (typeof ACTIVITY_RESULTS)[number];
@@ -116,6 +118,8 @@ export const ACTIVITY_RESULT_LABELS: Record<ActivityResult, string> = {
   no_interest: "Brak zainteresowania",
   wrong_contact: "Niewłaściwa osoba kontaktowa",
   lead_disqualified: "Lead zdyskwalifikowany",
+  competitor_first: "Konkurencja była pierwsza",
+  offer_price_mismatch: "Oferta nie spełnia oczekiwań finansowych",
   other: "Inny",
 };
 

@@ -1,6 +1,19 @@
 import { daysBetween, parseDate } from "@/lib/dates";
 import type { Activity, Lead } from "@/types/domain";
+import type { ActivityResult } from "@/types/enums";
 import { ACTIVE_LEAD_STATUSES } from "@/types/enums";
+
+/** Dni po wykonaniu aktywności, zanim lead trafi na listę „bez kolejnego kroku”. */
+export const NEXT_STEP_GRACE_DAYS = 3;
+
+/** Wyniki ostatniego działania — nie wymagają planowania kolejnego kroku. */
+export const NEXT_STEP_EXCLUDED_RESULTS: ActivityResult[] = [
+  "no_interest",
+  "lead_disqualified",
+  "competitor_first",
+  "wrong_contact",
+  "offer_price_mismatch",
+];
 
 export function isActiveLead(lead: Lead): boolean {
   return ACTIVE_LEAD_STATUSES.includes(lead.status);
@@ -70,6 +83,14 @@ export function hasFuturePlanned(
   );
 }
 
+export function lastCompletedActivity(
+  leadId: string,
+  activities: Activity[],
+): Activity | null {
+  const list = completedActivitiesForLead(leadId, activities);
+  return list[list.length - 1] ?? null;
+}
+
 export function isLeadWithoutFirstContact(lead: Lead, activities: Activity[]): boolean {
   return !hasFirstContact(lead.id, activities);
 }
@@ -80,9 +101,19 @@ export function isLeadWithoutNextStep(
   today: Date | string,
 ): boolean {
   if (!isActiveLead(lead)) return false;
-  const completed = completedActivitiesForLead(lead.id, activities);
-  if (completed.length === 0) return false;
-  return !hasFuturePlanned(lead.id, activities, today);
+  if (hasFuturePlanned(lead.id, activities, today)) return false;
+
+  const lastCompleted = lastCompletedActivity(lead.id, activities);
+  if (!lastCompleted?.completedAt) return false;
+
+  if (
+    lastCompleted.result &&
+    NEXT_STEP_EXCLUDED_RESULTS.includes(lastCompleted.result)
+  ) {
+    return false;
+  }
+
+  return daysBetween(lastCompleted.completedAt, today) >= NEXT_STEP_GRACE_DAYS;
 }
 
 export function daysWithoutContact(

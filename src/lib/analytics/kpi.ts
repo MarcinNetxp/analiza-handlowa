@@ -98,7 +98,7 @@ export function buildAlerts(
   if (kpis.noNextStep > 0) {
     alerts.push({
       id: "no-next",
-      message: `${kpis.noNextStep} leadów nie ma zaplanowanego kolejnego działania`,
+      message: `${kpis.noNextStep} leadów bez planu ≥3 dni po wykonaniu ostatniego działania`,
       severity: "danger",
       href: "/drilldown?type=no_next_step",
     });
