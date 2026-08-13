@@ -4,7 +4,7 @@ import { AppShell } from "@/components/AppShell";
 import { loadAppData } from "@/lib/data/load";
 
 export const metadata: Metadata = {
-  title: "Analiza handlowa — ngCRM Insights",
+  title: "Analiza handlowa — Aktywności CRM",
   description:
     "Warstwa managersko-analityczna nad aktywnościami handlowców (nxp_aktualnosci).",
 };

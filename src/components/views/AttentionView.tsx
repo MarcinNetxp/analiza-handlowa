@@ -48,7 +48,7 @@ export function AttentionView({ data }: { data: AppData }) {
               {row.original.lead.companyName}
             </Link>
             <div className="mt-0.5 flex flex-wrap items-center gap-2">
-              <span className="text-xs text-ink-500">
+              <span className="text-xs text-slate-500">
                 {RELATED_TYPE_LABELS[row.original.lead.relatedType]}
               </span>
               <CrmLink href={row.original.lead.crmUrl} />

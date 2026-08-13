@@ -14,46 +14,49 @@ const NAV = [
   { href: "/effectiveness", label: "Skuteczność" },
 ];
 
-export function AppSidebar({
-  dataSource,
-}: {
-  dataSource: DataSource;
-}) {
+export function AppSidebar({ dataSource }: { dataSource: DataSource }) {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden w-60 shrink-0 self-start lg:block">
-      <div className="sidebar-card sticky top-24">
-        <p className="label-caps px-3 pb-2 text-brand-600/80">Sprzedaż</p>
-        <p className="px-3 pb-3 text-xs text-ink-500">
-          Analiza aktywności · moduł{" "}
-          <span className="font-medium text-ink-700">nxp_aktualnosci</span>
-        </p>
-        <nav className="flex flex-col gap-1">
-          {NAV.map((item) => {
-            const active =
-              item.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  active ? "sidebar-pill sidebar-pill-active" : "sidebar-pill",
-                )}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="mt-4 border-t border-ink-100 px-3 pt-3 text-[11px] text-ink-400">
-          Źródło:{" "}
-          <span className="font-medium text-ink-600">
-            {dataSource === "api" ? "CRM (REST API)" : "mock (demo)"}
-          </span>
+    <aside className="flex w-64 shrink-0 flex-col border-r border-slate-200 bg-slate-950 text-slate-100">
+      <div className="border-b border-slate-800 px-5 py-5">
+        <div className="text-xs uppercase tracking-[0.14em] text-slate-400">
+          Analiza handlowa
         </div>
+        <div className="mt-1 text-lg font-semibold leading-tight">
+          Aktywności CRM
+        </div>
+        <p className="mt-2 text-xs text-slate-400">
+          Warstwa managerska — monitoring procesu sprzedaży
+        </p>
+      </div>
+      <nav className="flex flex-1 flex-col gap-1 p-3">
+        {NAV.map((item) => {
+          const active =
+            item.href === "/"
+              ? pathname === "/"
+              : pathname.startsWith(item.href);
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "rounded-md px-3 py-2 text-sm transition-colors",
+                active
+                  ? "bg-slate-800 text-white"
+                  : "text-slate-300 hover:bg-slate-900 hover:text-white",
+              )}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+      <div className="border-t border-slate-800 px-4 py-3 text-[11px] text-slate-500">
+        Źródło:{" "}
+        <span className="font-medium text-slate-300">
+          {dataSource === "api" ? "CRM (REST API)" : "mock (demo)"}
+        </span>
       </div>
     </aside>
   );
