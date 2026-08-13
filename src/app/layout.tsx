@@ -9,6 +9,9 @@ export const metadata: Metadata = {
     "Warstwa managersko-analityczna nad aktywnościami handlowców (nxp_aktualnosci).",
 };
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function RootLayout({
   children,
 }: Readonly<{

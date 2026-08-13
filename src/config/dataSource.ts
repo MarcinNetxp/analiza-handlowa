@@ -1,13 +1,17 @@
 export type DataSource = "mock" | "api" | "ngcrm";
 
-function readDataSource(): DataSource {
+/** Wywołuj przy każdym load — nie cache'uj na poziomie modułu (Next SSG). */
+export function readDataSource(): DataSource {
   const v = process.env.DATA_SOURCE?.trim().toLowerCase();
+  if (v === "mock") return "mock";
   if (v === "api") return "api";
   if (v === "ngcrm") return "ngcrm";
+  // Produkcja Vercel: domyślnie BFF ngCRM (OAuth tylko na serwerze CRM).
+  if (process.env.VERCEL === "1") return "ngcrm";
   return "mock";
 }
 
-/** ngcrm = dane z ngCRM BFF (OAuth CRM tylko na serwerze). api = bezpośrednio SuiteCRM na Vercel. */
+/** @deprecated użyj readDataSource() w loadAppData */
 export const DATA_SOURCE: DataSource = readDataSource();
 
 export const NGCRM_API_URL =

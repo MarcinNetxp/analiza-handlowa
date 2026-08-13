@@ -9,7 +9,7 @@ export async function buildDatasetFromNgcrm(): Promise<AppData> {
 
   const res = await fetch(`${NGCRM_API_URL}/handlowy/bff/dataset`, {
     headers,
-    next: { revalidate: 120 },
+    cache: "no-store",
   });
 
   if (!res.ok) {

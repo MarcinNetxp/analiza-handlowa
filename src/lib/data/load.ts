@@ -1,4 +1,4 @@
-import { DATA_SOURCE } from "@/config/dataSource";
+import { readDataSource } from "@/config/dataSource";
 import { buildDatasetFromCrm } from "@/lib/crm/buildDataset";
 import { buildDatasetFromNgcrm } from "@/lib/data/loadNgcrm";
 import { getMockDataset } from "@/data/mock/store";
@@ -16,7 +16,9 @@ export interface AppData {
 }
 
 export async function loadAppData(): Promise<AppData> {
-  if (DATA_SOURCE === "ngcrm") {
+  const source = readDataSource();
+
+  if (source === "ngcrm") {
     try {
       return await buildDatasetFromNgcrm();
     } catch (err) {
@@ -35,7 +37,7 @@ export async function loadAppData(): Promise<AppData> {
     }
   }
 
-  if (DATA_SOURCE === "api") {
+  if (source === "api") {
     try {
       return await buildDatasetFromCrm();
     } catch (err) {

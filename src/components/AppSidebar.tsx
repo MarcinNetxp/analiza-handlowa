@@ -56,9 +56,9 @@ export function AppSidebar({ dataSource }: { dataSource: DataSource }) {
         Źródło:{" "}
         <span className="font-medium text-slate-300">
           {dataSource === "ngcrm"
-            ? "ngCRM BFF (SuiteCRM)"
+            ? "ngCRM BFF · SuiteCRM"
             : dataSource === "api"
-              ? "CRM (REST API)"
+              ? "CRM REST API"
               : "mock (demo)"}
         </span>
       </div>
