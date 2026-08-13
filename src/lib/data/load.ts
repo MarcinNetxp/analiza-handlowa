@@ -1,5 +1,6 @@
 import { DATA_SOURCE } from "@/config/dataSource";
 import { buildDatasetFromCrm } from "@/lib/crm/buildDataset";
+import { buildDatasetFromNgcrm } from "@/lib/data/loadNgcrm";
 import { getMockDataset } from "@/data/mock/store";
 import type { Activity, Lead, Salesperson } from "@/types/domain";
 import type { DataSource } from "@/config/dataSource";
@@ -15,6 +16,25 @@ export interface AppData {
 }
 
 export async function loadAppData(): Promise<AppData> {
+  if (DATA_SOURCE === "ngcrm") {
+    try {
+      return await buildDatasetFromNgcrm();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Nieznany błąd ładowania ngCRM BFF";
+      console.error("[loadAppData] ngCRM BFF error:", message);
+      return {
+        salespeople: [],
+        leads: [],
+        activities: [],
+        today: new Date().toISOString(),
+        dataSource: "ngcrm",
+        crmConfigured: false,
+        loadError: message,
+      };
+    }
+  }
+
   if (DATA_SOURCE === "api") {
     try {
       return await buildDatasetFromCrm();

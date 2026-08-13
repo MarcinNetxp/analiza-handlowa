@@ -55,7 +55,11 @@ export function AppSidebar({ dataSource }: { dataSource: DataSource }) {
       <div className="border-t border-slate-800 px-4 py-3 text-[11px] text-slate-500">
         Źródło:{" "}
         <span className="font-medium text-slate-300">
-          {dataSource === "api" ? "CRM (REST API)" : "mock (demo)"}
+          {dataSource === "ngcrm"
+            ? "ngCRM BFF (SuiteCRM)"
+            : dataSource === "api"
+              ? "CRM (REST API)"
+              : "mock (demo)"}
         </span>
       </div>
     </aside>
