@@ -1,60 +1,55 @@
-# Analiza handlowa — Aktywności CRM
+# Analiza handlowa — ngCRM Insights
 
-Warstwa managersko-analityczna nad aktywnościami handlowców (demo na mock data).
+Warstwa managersko-analityczna nad modułem CRM **nxp_aktualnosci** (Aktywności handlowe).
 
-**Nie jest to CRM** — odpowiada na pytania:
+Docelowo moduł trafi do ngCRM (obok Marketing). Na razie sandbox: **https://analiza-handlowa.vercel.app**
 
-1. Czy handlowcy wykonują zaplanowaną pracę?
-2. Czy leady są regularnie obsługiwane?
-3. Gdzie występują zaniedbania wymagające interwencji?
+## Źródło danych
 
-## Stack
+| `DATA_SOURCE` | Opis |
+|---------------|------|
+| `mock` | Dane demo (domyślnie) |
+| `api` | SuiteCRM REST API v8 — moduł `nxp_aktualnosci` |
 
-- Next.js 15 (App Router) + TypeScript
-- Tailwind CSS
-- Recharts
-- TanStack Table
+## Vercel — zmienne środowiskowe
 
-## Uruchomienie lokalne
+W **Settings → Environment Variables** (Production + Preview):
+
+| Klucz | Wartość |
+|-------|---------|
+| `DATA_SOURCE` | `api` |
+| `CRM_BASE_URL` | `https://crm.netxp.pl` |
+| `CRM_API_CLIENT_ID` | *(OAuth2 client credentials z SuiteCRM)* |
+| `CRM_API_CLIENT_SECRET` | *(secret)* |
+| `CRM_SSL_VERIFY` | `false` |
+| `CRM_ACTIVITIES_SINCE` | opcjonalnie `2025-02-01` |
+
+Te same credentials co `NGCRM_CRM_API_CLIENT_*` w ngCRM.
+
+## Linki do CRM
+
+- Lista wszystkich aktywności:  
+  `https://crm.netxp.pl/index.php?module=nxp_aktualnosci&action=index&parentTab=Wszystko`
+- Pojedyncza aktywność:  
+  `...&module=nxp_aktualnosci&action=DetailView&record={uuid}`
+- Powiązany lead/kontakt: DetailView odpowiedniego modułu
+
+W panelu analizy: **Otwórz w CRM** przy aktywnościach i klientach.
+
+## Probe API (diagnostyka)
+
+Po deployu z credentials: `GET /api/crm/probe` — zwraca klucze pól z próbki rekordu (do dopracowania mapowania).
+
+## Lokalnie
 
 ```bash
+cp .env.example .env.local
+# uzupełnij CRM_* i DATA_SOURCE=api
 npm install
 npm run dev
 ```
 
-Aplikacja: [http://localhost:3000](http://localhost:3000)
+## Mapowanie pól CRM
 
-## Źródło danych (API-ready)
-
-```ts
-// src/config/dataSource.ts
-export const DATA_SOURCE: "mock" | "api" = "mock";
-```
-
-Widoki korzystają wyłącznie z `services/*`. Przełączenie na API = implementacja `services/api/repository.ts` + zmiana flagi.
-
-## Mock data
-
-Deterministyczny generator (`src/data/mock/generate.ts`, seed `20260807`):
-
-- 8 handlowców (archetypy: top dyscyplina, high-volume/low-result, overdue, reschedule…)
-- 260+ leadów
-- 1500+ aktywności
-- okres ~6 miesięcy
-
-```bash
-npm run generate-mock
-```
-
-## Vercel
-
-Połącz repozytorium z Vercel (Framework Preset: Next.js). Build:
-
-- Install: `npm install`
-- Build: `npm run build`
-- Output: domyślny Next.js
-
-## Dwie osie oceny handlowca
-
-- **Aktywność** — wolumen działań
-- **Dyscyplina procesu** — Sales Activity Discipline Score 0–100 (terminowość, kolejny krok, zaległości, wyniki, 1. reakcja)
+Plik `src/lib/crm/mapping.ts` — mapuje słowniki (Działanie, Status, Wynik, Powód) z wielu możliwych nazw pól `_c`.  
+Po pierwszym probe doprecyzujemy nazwy pól w CRM.

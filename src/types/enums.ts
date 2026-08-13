@@ -160,3 +160,10 @@ export const LEAD_STATUS_LABELS: Record<LeadStatus, string> = {
   lost: "Przegrany",
   disqualified: "Zdyskwalifikowany",
 };
+
+export const RELATED_TYPE_LABELS = {
+  lead: "Potencjalny klient",
+  contact: "Kontakt",
+  account: "Kontrahent",
+  unknown: "Powiązane",
+} as const;

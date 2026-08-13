@@ -1,38 +1,38 @@
+import { buildDatasetFromCrm } from "@/lib/crm/buildDataset";
+import { DATA_SOURCE } from "@/config/dataSource";
 import type { Activity, Lead, Salesperson } from "@/types/domain";
-
-function notConfigured(): never {
-  throw new Error(
-    'DATA_SOURCE="api" — podłącz endpointy CRM w services/api/repository.ts. Mock jest dostępny przy DATA_SOURCE="mock".',
-  );
-}
+import type { AppData } from "@/lib/data/load";
 
 export async function listSalespeople(): Promise<Salesperson[]> {
-  notConfigured();
+  return (await loadCrmDataset()).salespeople;
 }
 
 export async function getSalesperson(id: string): Promise<Salesperson | null> {
-  void id;
-  notConfigured();
+  return (await loadCrmDataset()).salespeople.find((s) => s.id === id) ?? null;
 }
 
 export async function listLeads(): Promise<Lead[]> {
-  notConfigured();
+  return (await loadCrmDataset()).leads;
 }
 
 export async function getLead(id: string): Promise<Lead | null> {
-  void id;
-  notConfigured();
+  return (await loadCrmDataset()).leads.find((l) => l.id === id) ?? null;
 }
 
 export async function listActivities(): Promise<Activity[]> {
-  notConfigured();
+  return (await loadCrmDataset()).activities;
 }
 
 export async function getActivity(id: string): Promise<Activity | null> {
-  void id;
-  notConfigured();
+  return (await loadCrmDataset()).activities.find((a) => a.id === id) ?? null;
 }
 
 export async function getReferenceDate(): Promise<string> {
-  notConfigured();
+  return (await loadCrmDataset()).today;
 }
+
+async function loadCrmDataset(): Promise<AppData> {
+  return buildDatasetFromCrm();
+}
+
+export { DATA_SOURCE };

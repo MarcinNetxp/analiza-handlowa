@@ -9,6 +9,7 @@ import { resolveDrilldown } from "@/lib/analytics/kpi";
 import type { Activity, DrilldownType, Lead } from "@/types/domain";
 import { DataTable } from "@/components/DataTable";
 import { ExportCsvButton } from "@/components/ExportCsvButton";
+import { CrmLink } from "@/components/CrmLink";
 import { formatPlDateTime } from "@/lib/dates";
 import {
   ACTIVITY_STATUS_LABELS,
@@ -128,10 +129,16 @@ export function DrilldownView({
       {
         accessorKey: "status",
         header: "Status",
-        cell: ({ getValue }) =>
-          ACTIVITY_STATUS_LABELS[
-            getValue() as keyof typeof ACTIVITY_STATUS_LABELS
-          ],
+        cell: ({ row }) => (
+          <div>
+            {
+              ACTIVITY_STATUS_LABELS[
+                row.original.status as keyof typeof ACTIVITY_STATUS_LABELS
+              ]
+            }
+            <CrmLink href={row.original.crmUrl} className="mt-1" />
+          </div>
+        ),
       },
       {
         accessorKey: "currentPlannedAt",

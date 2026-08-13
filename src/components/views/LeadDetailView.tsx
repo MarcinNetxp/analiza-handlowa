@@ -10,6 +10,8 @@ import {
   analyticStatus,
 } from "@/lib/analytics/rules";
 import { formatPlDate, formatPlDateTime, parseDate } from "@/lib/dates";
+import { crmActivitiesListUrl } from "@/lib/crm/config";
+import { CrmLink } from "@/components/CrmLink";
 import {
   ACTIVITY_RESULT_LABELS,
   ACTIVITY_STATUS_LABELS,
@@ -17,6 +19,7 @@ import {
   INTEREST_AREA_LABELS,
   LEAD_SOURCE_LABELS,
   LEAD_STATUS_LABELS,
+  RELATED_TYPE_LABELS,
 } from "@/types/enums";
 
 export function LeadDetailView({
@@ -54,8 +57,16 @@ export function LeadDetailView({
         <p className="page-subtitle">
           {lead.contactPerson} ·{" "}
           {sp ? `${sp.firstName} ${sp.lastName}` : "—"} ·{" "}
-          {LEAD_STATUS_LABELS[lead.status]}
+          {LEAD_STATUS_LABELS[lead.status]} ·{" "}
+          {RELATED_TYPE_LABELS[lead.relatedType]}
         </p>
+        <div className="mt-2 flex flex-wrap gap-3">
+          <CrmLink href={lead.crmUrl} label="Rekord w CRM" />
+          <CrmLink
+            href={crmActivitiesListUrl()}
+            label="Wszystkie aktywności"
+          />
+        </div>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -118,6 +129,7 @@ export function LeadDetailView({
                     Przełożono {a.rescheduleCount}×
                   </div>
                 ) : null}
+                <CrmLink href={a.crmUrl} className="mt-1" />
               </li>
             );
           })}

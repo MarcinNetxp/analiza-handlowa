@@ -12,7 +12,8 @@ import {
 import { DataTable } from "@/components/DataTable";
 import { ExportCsvButton } from "@/components/ExportCsvButton";
 import { formatPlDate } from "@/lib/dates";
-import { LEAD_STATUS_LABELS } from "@/types/enums";
+import { LEAD_STATUS_LABELS, RELATED_TYPE_LABELS } from "@/types/enums";
+import { CrmLink } from "@/components/CrmLink";
 import { cn } from "@/lib/utils";
 
 export function AttentionView({ data }: { data: AppData }) {
@@ -39,12 +40,20 @@ export function AttentionView({ data }: { data: AppData }) {
         accessorFn: (r) => r.lead.companyName,
         header: "Firma",
         cell: ({ row }) => (
-          <Link
-            href={`/leads/${row.original.lead.id}`}
-            className="font-medium hover:underline"
-          >
-            {row.original.lead.companyName}
-          </Link>
+          <div>
+            <Link
+              href={`/leads/${row.original.lead.id}`}
+              className="font-medium hover:underline"
+            >
+              {row.original.lead.companyName}
+            </Link>
+            <div className="mt-0.5 flex flex-wrap items-center gap-2">
+              <span className="text-xs text-ink-500">
+                {RELATED_TYPE_LABELS[row.original.lead.relatedType]}
+              </span>
+              <CrmLink href={row.original.lead.crmUrl} />
+            </div>
+          </div>
         ),
       },
       { accessorKey: "salespersonName", header: "Handlowiec" },

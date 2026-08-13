@@ -251,6 +251,7 @@ export function generateMockDataset(seed = 20260807): MockDataset {
 
     leads.push({
       id: `lead-${String(i + 1).padStart(4, "0")}`,
+      relatedType: "lead",
       companyName: companyName(rng, i),
       contactPerson: `${pick(rng, FIRST_NAMES)} ${pick(rng, LAST_NAMES)}`,
       salespersonId: sp.id,
@@ -269,6 +270,7 @@ export function generateMockDataset(seed = 20260807): MockDataset {
     const createdAt = addDays(windowStart, randInt(rng, 0, 60));
     leads.push({
       id: `lead-inact-${i + 1}`,
+      relatedType: "lead",
       companyName: companyName(rng, 900 + i),
       contactPerson: `${pick(rng, FIRST_NAMES)} ${pick(rng, LAST_NAMES)}`,
       salespersonId: inactive.id,
@@ -284,9 +286,29 @@ export function generateMockDataset(seed = 20260807): MockDataset {
   const activities: Activity[] = [];
   let activitySeq = 1;
 
-  const pushActivity = (a: Omit<Activity, "id">) => {
+type ActivityInput = Omit<
+  Activity,
+  | "id"
+  | "crmId"
+  | "crmUrl"
+  | "relatedType"
+  | "relatedCrmId"
+  | "relatedLabel"
+  | "relatedCrmUrl"
+>;
+
+  const pushActivity = (a: ActivityInput) => {
     const id = `act-${String(activitySeq++).padStart(5, "0")}`;
-    activities.push({ id, ...a });
+    activities.push({
+      id,
+      crmId: id,
+      crmUrl: null,
+      relatedType: "lead",
+      relatedCrmId: a.leadId,
+      relatedLabel: "—",
+      relatedCrmUrl: null,
+      ...a,
+    });
     return id;
   };
 
@@ -492,6 +514,23 @@ export function generateMockDataset(seed = 20260807): MockDataset {
       cancellationReason: null,
       hasNextStep: false,
     });
+  }
+
+  for (const lead of leads) {
+    lead.relatedType = "lead";
+    lead.crmId = lead.id;
+    lead.crmUrl = null;
+  }
+
+  const leadById = new Map(leads.map((l) => [l.id, l]));
+  for (const a of activities) {
+    const lead = leadById.get(a.leadId);
+    a.relatedType = "lead";
+    a.relatedCrmId = a.leadId;
+    a.relatedLabel = lead?.companyName ?? "—";
+    a.relatedCrmUrl = null;
+    a.crmId = a.id;
+    a.crmUrl = null;
   }
 
   return {

@@ -4,9 +4,9 @@ import { AppShell } from "@/components/AppShell";
 import { loadAppData } from "@/lib/data/load";
 
 export const metadata: Metadata = {
-  title: "Analiza handlowa — Aktywności CRM",
+  title: "Analiza handlowa — ngCRM Insights",
   description:
-    "Warstwa managersko-analityczna nad aktywnościami handlowców (demo mock).",
+    "Warstwa managersko-analityczna nad aktywnościami handlowców (nxp_aktualnosci).",
 };
 
 export default async function RootLayout({
@@ -19,7 +19,12 @@ export default async function RootLayout({
   return (
     <html lang="pl">
       <body>
-        <AppShell salespeople={data.salespeople} today={data.today}>
+        <AppShell
+          salespeople={data.salespeople}
+          today={data.today}
+          dataSource={data.dataSource}
+          loadError={data.loadError}
+        >
           {children}
         </AppShell>
       </body>

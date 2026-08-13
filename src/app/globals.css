@@ -3,38 +3,54 @@
 @tailwind utilities;
 
 :root {
-  --background: #f1f5f9;
-  --foreground: #0f172a;
-  --ok: #047857;
-  --warn: #b45309;
-  --danger: #be123c;
+  --background: #ffffff;
+  --foreground: #1b1b1f;
 }
 
 body {
+  min-height: 100vh;
   color: var(--foreground);
-  background: var(--background);
-  font-family:
-    "Segoe UI",
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    sans-serif;
+  background:
+    radial-gradient(900px 480px at 8% -12%, rgba(127, 37, 48, 0.12), transparent 55%),
+    radial-gradient(700px 420px at 96% -6%, rgba(197, 99, 103, 0.1), transparent 50%),
+    #ffffff;
+  font-family: "Inter", "Segoe UI", system-ui, sans-serif;
 }
 
 @layer components {
   .input {
-    @apply h-9 rounded-md border border-slate-300 bg-white px-2 text-sm text-slate-800 outline-none focus:border-slate-500;
+    @apply h-9 rounded-lg border border-ink-200 bg-white px-2.5 text-sm text-ink-800 outline-none focus:border-brand-500;
   }
 
   .page-title {
-    @apply text-xl font-semibold text-slate-900;
+    @apply text-xl font-bold tracking-tight text-ink-900;
   }
 
   .page-subtitle {
-    @apply mt-1 text-sm text-slate-500;
+    @apply mt-1 text-sm text-ink-500;
   }
 
   .section-title {
-    @apply text-sm font-semibold text-slate-900;
+    @apply text-sm font-semibold text-ink-900;
+  }
+
+  .label-caps {
+    @apply text-[0.7rem] font-semibold uppercase tracking-[0.08em] text-ink-400;
+  }
+
+  .card {
+    @apply rounded-2xl border border-ink-200 bg-white/90 shadow-sm;
+  }
+
+  .sidebar-card {
+    @apply rounded-3xl border border-ink-200 bg-white/90 p-3.5 shadow-md backdrop-blur-sm;
+  }
+
+  .sidebar-pill {
+    @apply block rounded-full px-3.5 py-2 text-sm font-medium text-ink-600 transition-colors hover:bg-ink-50 hover:text-ink-900;
+  }
+
+  .sidebar-pill-active {
+    @apply bg-brand-600 font-semibold text-white shadow-[0_4px_12px_-4px_rgb(127_37_48_/_0.45)] hover:bg-brand-600 hover:text-white;
   }
 }

@@ -9,14 +9,17 @@ import type {
   SalespersonStatus,
 } from "./enums";
 
+export type RelatedEntityType = "lead" | "contact" | "account" | "unknown";
+
 export interface Salesperson {
   id: string;
+  crmId?: string;
   firstName: string;
   lastName: string;
   email: string;
   team: string;
   status: SalespersonStatus;
-  /** Archetype used only for mock generation / demos */
+  /** Mock-only behavioral profile */
   archetype?:
     | "top_discipline"
     | "high_volume_low_result"
@@ -28,6 +31,9 @@ export interface Salesperson {
 
 export interface Lead {
   id: string;
+  crmId?: string;
+  crmUrl?: string | null;
+  relatedType: RelatedEntityType;
   companyName: string;
   contactPerson: string;
   salespersonId: string;
@@ -41,8 +47,14 @@ export interface Lead {
 
 export interface Activity {
   id: string;
+  crmId?: string;
+  crmUrl?: string | null;
   leadId: string;
   salespersonId: string;
+  relatedType: RelatedEntityType;
+  relatedCrmId: string;
+  relatedLabel: string;
+  relatedCrmUrl?: string | null;
   type: ActivityType;
   createdAt: string;
   plannedAt: string;

@@ -1,23 +1,46 @@
-import {
-  activitiesService,
-  leadsService,
-  salespeopleService,
-} from "@/services";
+import { DATA_SOURCE } from "@/config/dataSource";
+import { buildDatasetFromCrm } from "@/lib/crm/buildDataset";
+import { getMockDataset } from "@/data/mock/store";
 import type { Activity, Lead, Salesperson } from "@/types/domain";
+import type { DataSource } from "@/config/dataSource";
 
 export interface AppData {
   salespeople: Salesperson[];
   leads: Lead[];
   activities: Activity[];
   today: string;
+  dataSource: DataSource;
+  crmConfigured: boolean;
+  loadError?: string;
 }
 
 export async function loadAppData(): Promise<AppData> {
-  const [salespeople, leads, activities, today] = await Promise.all([
-    salespeopleService.list(),
-    leadsService.list(),
-    activitiesService.list(),
-    activitiesService.getReferenceDate(),
-  ]);
-  return { salespeople, leads, activities, today };
+  if (DATA_SOURCE === "api") {
+    try {
+      return await buildDatasetFromCrm();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Nieznany błąd ładowania CRM";
+      console.error("[loadAppData] CRM error:", message);
+      return {
+        salespeople: [],
+        leads: [],
+        activities: [],
+        today: new Date().toISOString(),
+        dataSource: "api",
+        crmConfigured: false,
+        loadError: message,
+      };
+    }
+  }
+
+  const mock = getMockDataset();
+  return {
+    salespeople: mock.salespeople,
+    leads: mock.leads,
+    activities: mock.activities,
+    today: mock.referenceDate,
+    dataSource: "mock",
+    crmConfigured: false,
+  };
 }

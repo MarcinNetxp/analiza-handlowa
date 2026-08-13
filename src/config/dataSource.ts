@@ -1,4 +1,10 @@
 export type DataSource = "mock" | "api";
 
-/** Switch to "api" when CRM integration is ready — views stay unchanged. */
-export const DATA_SOURCE: DataSource = "mock";
+function readDataSource(): DataSource {
+  const v = process.env.DATA_SOURCE?.trim().toLowerCase();
+  if (v === "api") return "api";
+  return "mock";
+}
+
+/** Ustaw DATA_SOURCE=api na Vercel wraz z credentials CRM. */
+export const DATA_SOURCE: DataSource = readDataSource();

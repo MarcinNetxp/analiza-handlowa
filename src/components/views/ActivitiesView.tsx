@@ -9,6 +9,7 @@ import { filterActivitiesForDashboard } from "@/lib/analytics/filters";
 import { analyticStatus } from "@/lib/analytics/rules";
 import { DataTable } from "@/components/DataTable";
 import { ExportCsvButton } from "@/components/ExportCsvButton";
+import { CrmLink } from "@/components/CrmLink";
 import { formatPlDateTime } from "@/lib/dates";
 import type { Activity } from "@/types/domain";
 import {
@@ -73,7 +74,16 @@ export function ActivitiesView({ data }: { data: AppData }) {
         cell: ({ getValue }) =>
           ACTIVITY_TYPE_LABELS[getValue() as keyof typeof ACTIVITY_TYPE_LABELS],
       },
-      { accessorKey: "analytic", header: "Status" },
+      {
+        accessorKey: "analytic",
+        header: "Status",
+        cell: ({ row }) => (
+          <div className="flex flex-col gap-1">
+            <span>{row.original.analytic}</span>
+            <CrmLink href={row.original.crmUrl} label="Aktywność w CRM" />
+          </div>
+        ),
+      },
       {
         accessorKey: "currentPlannedAt",
         header: "Termin",
