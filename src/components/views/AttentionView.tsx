@@ -38,7 +38,7 @@ export function AttentionView({ data }: { data: AppData }) {
       {
         id: "company",
         accessorFn: (r) => r.lead.companyName,
-        header: "Firma",
+        header: "Kontakt",
         cell: ({ row }) => (
           <div>
             <Link
@@ -93,7 +93,7 @@ export function AttentionView({ data }: { data: AppData }) {
   );
 
   const csvRows = rows.map((r) => ({
-    Firma: r.lead.companyName,
+    Kontakt: r.lead.companyName,
     Handlowiec: r.salespersonName,
     Status: LEAD_STATUS_LABELS[r.lead.status],
     "Ostatnia aktywność": r.lastActivityType ?? "",

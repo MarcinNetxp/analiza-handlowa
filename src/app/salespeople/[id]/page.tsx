@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { SalespersonDetailView } from "@/components/views/SalespersonDetailView";
 import { loadAppData } from "@/lib/data/load";
-import { salespeopleService } from "@/services";
 
 export default async function SalespersonPage({
   params,
@@ -9,10 +8,8 @@ export default async function SalespersonPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [data, salesperson] = await Promise.all([
-    loadAppData(),
-    salespeopleService.getById(id),
-  ]);
+  const data = await loadAppData();
+  const salesperson = data.salespeople.find((s) => s.id === id);
   if (!salesperson) notFound();
   return <SalespersonDetailView data={data} salesperson={salesperson} />;
 }

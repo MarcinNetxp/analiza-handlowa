@@ -56,7 +56,7 @@ export function ActivitiesView({ data }: { data: AppData }) {
     () => [
       {
         accessorKey: "companyName",
-        header: "Firma",
+        header: "Kontakt",
         cell: ({ row }) => (
           <Link
             href={`/leads/${row.original.leadId}`}
@@ -109,7 +109,7 @@ export function ActivitiesView({ data }: { data: AppData }) {
   );
 
   const csvRows = rows.map((r) => ({
-    Firma: r.companyName,
+    Kontakt: r.companyName,
     Handlowiec: r.salespersonName,
     Typ: ACTIVITY_TYPE_LABELS[r.type],
     Status: r.analytic,

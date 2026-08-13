@@ -70,7 +70,7 @@ export function DrilldownView({
     () => [
       {
         accessorKey: "companyName",
-        header: "Firma",
+        header: "Kontakt",
         cell: ({ row }) => (
           <Link
             href={`/leads/${row.original.id}`}
@@ -109,7 +109,7 @@ export function DrilldownView({
         id: "company",
         accessorFn: (a) =>
           data.leads.find((l) => l.id === a.leadId)?.companyName ?? "—",
-        header: "Firma",
+        header: "Kontakt",
         cell: ({ row }) => (
           <Link
             href={`/leads/${row.original.leadId}`}
@@ -153,12 +153,12 @@ export function DrilldownView({
   const csvRows =
     result.kind === "leads"
       ? result.leads.map((l) => ({
-          Firma: l.companyName,
+          Kontakt: l.companyName,
           Status: LEAD_STATUS_LABELS[l.status],
           "Ostatni kontakt": l.lastContactAt ?? "",
         }))
       : result.activities.map((a) => ({
-          Firma:
+          Kontakt:
             data.leads.find((l) => l.id === a.leadId)?.companyName ?? "",
           Typ: ACTIVITY_TYPE_LABELS[a.type],
           Status: ACTIVITY_STATUS_LABELS[a.status],
