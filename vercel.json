@@ -1,6 +1,9 @@
 {
   "env": {
     "DATA_SOURCE": "ngcrm",
-    "NGCRM_API_URL": "https://crm.netxp.pl/ngcrm/api"
+    "NGCRM_API_URL": "https://crm.netxp.pl/ngcrm/api",
+    "MANAGER_PASSWORD": "HandlowyMgr2026!",
+    "MANAGER_SESSION_TOKEN": "f8c2a91e4b7d6035e1a94c82d56f0b37c9e2d148a6b03f5",
+    "HANDLOWY_PORTAL_TOKENS": "{\"adrian-nowicki\":\"974cc54871bec294\",\"artur-zbrozyna\":\"3f47477319229acc\",\"marcin-karolkiewicz\":\"ac8b618c582b6cca\",\"damian-swiecak\":\"a0d516543883de0a\",\"izabela-wojciechowska\":\"1d475a9c0a0077d0\",\"jacek-zielinski\":\"c14c9c067ae68ea0\",\"dariusz-krzesniak\":\"25a82613a05a2d29\"}"
   }
 }
