@@ -25,12 +25,16 @@ import { ACTIVITY_RESULT_LABELS } from "@/types/enums";
 import { formatPercent } from "@/lib/utils";
 import type { Salesperson } from "@/types/domain";
 
+import { drilldownHref, joinAppPath } from "@/lib/paths";
+
 export function SalespersonDetailView({
   data,
   salesperson,
+  basePath = "",
 }: {
   data: AppData;
   salesperson: Salesperson;
+  basePath?: string;
 }) {
   const { filters, today } = useFilters();
   const spFilters = useMemo(
@@ -69,17 +73,17 @@ export function SalespersonDetailView({
   const problems = [
     {
       label: `${kpis.noNextStep} leadów bez kolejnego kroku`,
-      href: `/drilldown?type=no_next_step&salespersonId=${salesperson.id}`,
+      href: drilldownHref("no_next_step", basePath, salesperson.id),
       show: kpis.noNextStep > 0,
     },
     {
       label: `${kpis.overdue} wydarzeń po terminie`,
-      href: `/drilldown?type=overdue&salespersonId=${salesperson.id}`,
+      href: drilldownHref("overdue", basePath, salesperson.id),
       show: kpis.overdue > 0,
     },
     {
       label: `${kpis.noContact30} leadów bez kontaktu od ponad 30 dni`,
-      href: `/drilldown?type=no_contact_30&salespersonId=${salesperson.id}`,
+      href: drilldownHref("no_contact_30", basePath, salesperson.id),
       show: kpis.noContact30 > 0,
     },
     {
@@ -91,7 +95,7 @@ export function SalespersonDetailView({
             !a.result,
         ).length
       } wykonanych aktywności bez wyniku`,
-      href: `/drilldown?type=no_result&salespersonId=${salesperson.id}`,
+      href: drilldownHref("no_result", basePath, salesperson.id),
       show: true,
     },
   ].filter((p) => p.show && !p.label.startsWith("0 "));
@@ -99,8 +103,11 @@ export function SalespersonDetailView({
   return (
     <div className="space-y-5">
       <div>
-        <Link href="/salespeople" className="text-xs text-slate-500 hover:underline">
-          ← Handlowcy
+        <Link
+          href={basePath ? joinAppPath(basePath, "/") : "/salespeople"}
+          className="text-xs text-slate-500 hover:underline"
+        >
+          ← {basePath ? "Pulpit" : "Handlowcy"}
         </Link>
         <h1 className="page-title mt-1">
           {salesperson.firstName} {salesperson.lastName}
@@ -122,13 +129,13 @@ export function SalespersonDetailView({
         <KpiCard
           label="Zaległe aktywności"
           value={kpis.overdue}
-          href={`/drilldown?type=overdue&salespersonId=${salesperson.id}`}
+          href={drilldownHref("overdue", basePath, salesperson.id)}
           tone={kpis.overdue > 0 ? "danger" : "ok"}
         />
         <KpiCard
           label="Leady bez kolejnego kroku"
           value={kpis.noNextStep}
-          href={`/drilldown?type=no_next_step&salespersonId=${salesperson.id}`}
+          href={drilldownHref("no_next_step", basePath, salesperson.id)}
           tone={kpis.noNextStep > 0 ? "danger" : "ok"}
         />
       </div>

@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { readDataSource } from "@/config/dataSource";
 import { buildDatasetFromCrm } from "@/lib/crm/buildDataset";
 import { buildDatasetFromNgcrm } from "@/lib/data/loadNgcrm";
@@ -15,7 +16,7 @@ export interface AppData {
   loadError?: string;
 }
 
-export async function loadAppData(): Promise<AppData> {
+export const loadAppData = cache(async function loadAppData(): Promise<AppData> {
   const source = readDataSource();
 
   if (source === "ngcrm") {
@@ -65,4 +66,4 @@ export async function loadAppData(): Promise<AppData> {
     dataSource: "mock",
     crmConfigured: false,
   };
-}
+});

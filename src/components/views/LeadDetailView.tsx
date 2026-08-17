@@ -22,12 +22,16 @@ import {
   RELATED_TYPE_LABELS,
 } from "@/types/enums";
 
+import { joinAppPath } from "@/lib/paths";
+
 export function LeadDetailView({
   data,
   lead,
+  basePath = "",
 }: {
   data: AppData;
   lead: Lead;
+  basePath?: string;
 }) {
   const today = data.today;
   const sp = data.salespeople.find((s) => s.id === lead.salespersonId);
@@ -50,7 +54,10 @@ export function LeadDetailView({
   return (
     <div className="space-y-5">
       <div>
-        <Link href="/attention" className="text-xs text-slate-500 hover:underline">
+        <Link
+          href={joinAppPath(basePath, "/attention")}
+          className="text-xs text-slate-500 hover:underline"
+        >
           ← Klienci wymagający uwagi
         </Link>
         <h1 className="page-title mt-1">{lead.companyName}</h1>

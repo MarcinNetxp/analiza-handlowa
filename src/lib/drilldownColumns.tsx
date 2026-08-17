@@ -51,13 +51,14 @@ function spName(salespeople: Salesperson[], id: string): string {
 export function buildLeadDrilldownColumns(
   type: DrilldownType,
   salespeople: Salesperson[],
+  basePath = "",
 ): ColumnDef<Lead>[] {
   const cols: ColumnDef<Lead>[] = [
     {
       accessorKey: "companyName",
       header: "Kontakt",
       cell: ({ row }) => (
-        <Link href={leadHref(row.original.id)} className="font-medium hover:underline">
+        <Link href={leadHref(row.original.id, basePath)} className="font-medium hover:underline">
           {row.original.companyName}
         </Link>
       ),
@@ -93,6 +94,7 @@ export function buildActivityDrilldownColumns(
   type: DrilldownType,
   leads: Lead[],
   salespeople: Salesperson[],
+  basePath = "",
 ): ColumnDef<Activity>[] {
   const cols: ColumnDef<Activity>[] = [
     {
@@ -100,7 +102,7 @@ export function buildActivityDrilldownColumns(
       header: "Kontakt",
       accessorFn: (a) => leads.find((l) => l.id === a.leadId)?.companyName ?? "—",
       cell: ({ row }) => (
-        <Link href={leadHref(row.original.leadId)} className="font-medium hover:underline">
+        <Link href={leadHref(row.original.leadId, basePath)} className="font-medium hover:underline">
           {leads.find((l) => l.id === row.original.leadId)?.companyName ?? "—"}
         </Link>
       ),

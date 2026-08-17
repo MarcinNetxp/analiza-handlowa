@@ -13,7 +13,15 @@ import { hoursBetween } from "@/lib/dates";
 import { formatPercent } from "@/lib/utils";
 import { KpiCard } from "@/components/KpiCard";
 
-export function EffectivenessView({ data }: { data: AppData }) {
+import { drilldownHref } from "@/lib/paths";
+
+export function EffectivenessView({
+  data,
+  basePath = "",
+}: {
+  data: AppData;
+  basePath?: string;
+}) {
   const { filters } = useFilters();
   const { today } = useFilters();
   const eff = useMemo(
@@ -113,7 +121,7 @@ export function EffectivenessView({ data }: { data: AppData }) {
           <KpiCard
             label="Bez pierwszego kontaktu"
             value={first.noFirstContact}
-            href="/drilldown?type=no_first_contact"
+            href={drilldownHref("no_first_contact", basePath)}
             tone={first.noFirstContact > 0 ? "danger" : "ok"}
           />
         </div>

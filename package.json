@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "generate-mock": "npx tsx --tsconfig tsconfig.json scripts/generate-mock.ts"
+    "generate-mock": "npx tsx --tsconfig tsconfig.json scripts/generate-mock.ts",
+    "generate-portal-tokens": "npx tsx --tsconfig tsconfig.json scripts/generate-portal-tokens.ts"
   },
   "dependencies": {
     "@tanstack/react-table": "^8.21.3",

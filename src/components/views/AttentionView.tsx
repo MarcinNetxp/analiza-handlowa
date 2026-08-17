@@ -17,7 +17,13 @@ import { CrmLink } from "@/components/CrmLink";
 import { leadHref } from "@/lib/paths";
 import { cn } from "@/lib/utils";
 
-export function AttentionView({ data }: { data: AppData }) {
+export function AttentionView({
+  data,
+  basePath = "",
+}: {
+  data: AppData;
+  basePath?: string;
+}) {
   const { filters, today } = useFilters();
   const buckets = useMemo(
     () =>
@@ -43,7 +49,7 @@ export function AttentionView({ data }: { data: AppData }) {
         cell: ({ row }) => (
           <div>
             <Link
-              href={leadHref(row.original.lead.id)}
+              href={leadHref(row.original.lead.id, basePath)}
               className="font-medium hover:underline"
             >
               {row.original.lead.companyName}

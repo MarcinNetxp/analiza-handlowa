@@ -25,7 +25,13 @@ type Row = Activity & {
   analytic: string;
 };
 
-export function ActivitiesView({ data }: { data: AppData }) {
+export function ActivitiesView({
+  data,
+  basePath = "",
+}: {
+  data: AppData;
+  basePath?: string;
+}) {
   const { filters, today } = useFilters();
 
   const rows = useMemo(() => {
@@ -60,7 +66,7 @@ export function ActivitiesView({ data }: { data: AppData }) {
         header: "Kontakt",
         cell: ({ row }) => (
           <Link
-            href={leadHref(row.original.leadId)}
+            href={leadHref(row.original.leadId, basePath)}
             className="font-medium text-slate-900 hover:underline"
             onClick={(e) => e.stopPropagation()}
           >

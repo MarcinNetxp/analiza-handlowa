@@ -11,13 +11,19 @@ import {
 import { AlertPanel } from "@/components/AlertPanel";
 import { KpiCard } from "@/components/KpiCard";
 import { formatPercent } from "@/lib/utils";
+import { drilldownHref } from "@/lib/paths";
 
-export function DashboardView({ data }: { data: AppData }) {
+export function DashboardView({
+  data,
+  basePath = "",
+}: {
+  data: AppData;
+  basePath?: string;
+}) {
   const { filters, today } = useFilters();
 
   const kpis = useMemo(
-    () =>
-      computeDashboardKpis(data.leads, data.activities, filters, today),
+    () => computeDashboardKpis(data.leads, data.activities, filters, today),
     [data, filters, today],
   );
   const alerts = useMemo(
@@ -28,40 +34,37 @@ export function DashboardView({ data }: { data: AppData }) {
         data.salespeople,
         filters,
         today,
+        basePath,
       ),
-    [data, filters, today],
+    [data, filters, today, basePath],
   );
   const first = useMemo(
     () => firstResponseMetrics(data.leads, data.activities, filters),
     [data, filters],
   );
 
+  const dd = (type: string) => drilldownHref(type, basePath);
+
   return (
     <div className="space-y-5">
       <div>
         <h1 className="page-title">Pulpit</h1>
         <p className="page-subtitle">
-          Czy zespół realizuje zaplanowaną pracę i regularnie obsługuje leady?
+          {basePath
+            ? "Twoje KPI aktywności i obsługi leadów — dane na bieżąco z CRM."
+            : "Czy zespół realizuje zaplanowaną pracę i regularnie obsługuje leady?"}
         </p>
       </div>
 
       <AlertPanel alerts={alerts} />
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiCard
-          label="Aktywne leady"
-          value={kpis.activeLeads}
-          href="/drilldown?type=active_leads"
-        />
-        <KpiCard
-          label="Zaplanowane aktywności"
-          value={kpis.planned}
-          href="/drilldown?type=planned"
-        />
+        <KpiCard label="Aktywne leady" value={kpis.activeLeads} href={dd("active_leads")} />
+        <KpiCard label="Zaplanowane aktywności" value={kpis.planned} href={dd("planned")} />
         <KpiCard
           label="Wykonane aktywności"
           value={kpis.completed}
-          href="/drilldown?type=completed"
+          href={dd("completed")}
           tone="ok"
         />
         <KpiCard
@@ -73,24 +76,20 @@ export function DashboardView({ data }: { data: AppData }) {
         <KpiCard
           label="Po terminie"
           value={kpis.overdue}
-          href="/drilldown?type=overdue"
+          href={dd("overdue")}
           tone={kpis.overdue > 0 ? "danger" : "ok"}
         />
         <KpiCard
           label="Przełożone"
           value={kpis.rescheduled}
-          href="/drilldown?type=rescheduled"
+          href={dd("rescheduled")}
           tone={kpis.rescheduled > 20 ? "warn" : "neutral"}
         />
-        <KpiCard
-          label="Anulowane"
-          value={kpis.cancelled}
-          href="/drilldown?type=cancelled"
-        />
+        <KpiCard label="Anulowane" value={kpis.cancelled} href={dd("cancelled")} />
         <KpiCard
           label="Leady bez kolejnego kroku"
           value={kpis.noNextStep}
-          href="/drilldown?type=no_next_step"
+          href={dd("no_next_step")}
           tone={kpis.noNextStep > 0 ? "danger" : "ok"}
           hint="Bez planu ≥3 dni po wykonaniu (poza wynikami zamykającymi)"
         />
@@ -99,22 +98,17 @@ export function DashboardView({ data }: { data: AppData }) {
       <div>
         <h2 className="section-title mb-3">Leady bez kontaktu</h2>
         <div className="grid gap-3 sm:grid-cols-3">
-          <KpiCard
-            label="Ponad 7 dni"
-            value={kpis.noContact7}
-            href="/drilldown?type=no_contact_7"
-            tone="warn"
-          />
+          <KpiCard label="Ponad 7 dni" value={kpis.noContact7} href={dd("no_contact_7")} tone="warn" />
           <KpiCard
             label="Ponad 14 dni"
             value={kpis.noContact14}
-            href="/drilldown?type=no_contact_14"
+            href={dd("no_contact_14")}
             tone="warn"
           />
           <KpiCard
             label="Ponad 30 dni"
             value={kpis.noContact30}
-            href="/drilldown?type=no_contact_30"
+            href={dd("no_contact_30")}
             tone="danger"
           />
         </div>
@@ -126,25 +120,19 @@ export function DashboardView({ data }: { data: AppData }) {
           <Mini
             label="Średnia"
             value={
-              first.averageHours != null
-                ? `${first.averageHours.toFixed(1)} h`
-                : "—"
+              first.averageHours != null ? `${first.averageHours.toFixed(1)} h` : "—"
             }
           />
           <Mini
             label="Mediana"
-            value={
-              first.medianHours != null
-                ? `${first.medianHours.toFixed(1)} h`
-                : "—"
-            }
+            value={first.medianHours != null ? `${first.medianHours.toFixed(1)} h` : "—"}
           />
           <Mini label="≤ 24h" value={formatPercent(first.pct24h)} />
           <Mini label="≤ 48h" value={formatPercent(first.pct48h)} />
           <Mini
             label="Bez pierwszego kontaktu"
             value={String(first.noFirstContact)}
-            href="/drilldown?type=no_first_contact"
+            href={dd("no_first_contact")}
           />
         </div>
       </div>

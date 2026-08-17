@@ -16,7 +16,13 @@ import {
 } from "@/types/enums";
 import { Button } from "./ui/button";
 
-export function FilterBar({ salespeople }: { salespeople: Salesperson[] }) {
+export function FilterBar({
+  salespeople,
+  hideSalespersonFilter = false,
+}: {
+  salespeople: Salesperson[];
+  hideSalespersonFilter?: boolean;
+}) {
   const { filters, setFilters, resetFilters } = useFilters();
 
   return (
@@ -38,6 +44,7 @@ export function FilterBar({ salespeople }: { salespeople: Salesperson[] }) {
             onChange={(e) => setFilters({ dateTo: e.target.value })}
           />
         </Field>
+        {!hideSalespersonFilter ? (
         <Field label="Handlowiec">
           <select
             className="input"
@@ -54,6 +61,7 @@ export function FilterBar({ salespeople }: { salespeople: Salesperson[] }) {
             ))}
           </select>
         </Field>
+        ) : null}
         <Field label="Typ aktywności">
           <select
             className="input"

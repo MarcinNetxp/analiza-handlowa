@@ -43,22 +43,39 @@ function initialFilters(today: string): GlobalFilters {
 export function FilterProvider({
   children,
   today,
+  lockedSalespersonId,
 }: {
   children: ReactNode;
   today: string;
+  lockedSalespersonId?: string;
 }) {
-  const [filters, setFiltersState] = useState<GlobalFilters>(() =>
-    initialFilters(today),
-  );
+  const [filters, setFiltersState] = useState<GlobalFilters>(() => ({
+    ...initialFilters(today),
+    ...(lockedSalespersonId ? { salespersonId: lockedSalespersonId } : {}),
+  }));
 
   const value = useMemo<FilterContextValue>(
     () => ({
       filters,
       today,
-      setFilters: (patch) => setFiltersState((prev) => ({ ...prev, ...patch })),
-      resetFilters: () => setFiltersState(initialFilters(today)),
+      setFilters: (patch) =>
+        setFiltersState((prev) => {
+          if (
+            lockedSalespersonId &&
+            patch.salespersonId &&
+            patch.salespersonId !== lockedSalespersonId
+          ) {
+            return prev;
+          }
+          return { ...prev, ...patch };
+        }),
+      resetFilters: () =>
+        setFiltersState({
+          ...initialFilters(today),
+          ...(lockedSalespersonId ? { salespersonId: lockedSalespersonId } : {}),
+        }),
     }),
-    [filters, today],
+    [filters, today, lockedSalespersonId],
   );
 
   return (

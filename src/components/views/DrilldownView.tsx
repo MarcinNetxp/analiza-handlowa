@@ -14,6 +14,7 @@ import {
   buildLeadDrilldownColumns,
   leadDrilldownCsvRows,
 } from "@/lib/drilldownColumns";
+import { joinAppPath } from "@/lib/paths";
 
 const TITLES: Record<DrilldownType, string> = {
   planned: "Zaplanowane aktywności",
@@ -37,10 +38,12 @@ export function DrilldownView({
   data,
   type,
   salespersonId,
+  basePath = "",
 }: {
   data: AppData;
   type: DrilldownType;
   salespersonId?: string;
+  basePath?: string;
 }) {
   const { filters, today, setFilters } = useFilters();
 
@@ -64,13 +67,13 @@ export function DrilldownView({
   );
 
   const leadColumns = useMemo(
-    () => buildLeadDrilldownColumns(type, data.salespeople),
-    [type, data.salespeople],
+    () => buildLeadDrilldownColumns(type, data.salespeople, basePath),
+    [type, data.salespeople, basePath],
   );
 
   const activityColumns = useMemo(
-    () => buildActivityDrilldownColumns(type, data.leads, data.salespeople),
-    [type, data.leads, data.salespeople],
+    () => buildActivityDrilldownColumns(type, data.leads, data.salespeople, basePath),
+    [type, data.leads, data.salespeople, basePath],
   );
 
   const csvRows =
@@ -82,7 +85,7 @@ export function DrilldownView({
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <Link href="/" className="text-xs text-slate-500 hover:underline">
+          <Link href={joinAppPath(basePath, "/")} className="text-xs text-slate-500 hover:underline">
             ← Pulpit
           </Link>
           <h1 className="page-title mt-1">{TITLES[type] ?? type}</h1>

@@ -1,5 +1,5 @@
 import { hoursBetween, parseDate, startOfWeekMonday, toISODate } from "@/lib/dates";
-import { leadHref, salespersonHref } from "@/lib/paths";
+import { leadHref, salespersonHref, drilldownHref } from "@/lib/paths";
 import type {
   Activity,
   DrilldownType,
@@ -91,6 +91,7 @@ export function buildAlerts(
   salespeople: Salesperson[],
   filters: GlobalFilters,
   today: string,
+  basePath = "",
 ): AlertItem[] {
   const kpis = computeDashboardKpis(leads, activities, filters, today);
   const alerts: AlertItem[] = [];
@@ -100,7 +101,7 @@ export function buildAlerts(
       id: "no-next",
       message: `${kpis.noNextStep} leadów bez planu ≥3 dni po wykonaniu ostatniego działania`,
       severity: "danger",
-      href: "/drilldown?type=no_next_step",
+      href: drilldownHref("no_next_step", basePath),
     });
   }
   if (kpis.overdue > 0) {
@@ -108,7 +109,7 @@ export function buildAlerts(
       id: "overdue",
       message: `${kpis.overdue} aktywności jest po terminie`,
       severity: "danger",
-      href: "/drilldown?type=overdue",
+      href: drilldownHref("overdue", basePath),
     });
   }
   if (kpis.noContact30 > 0) {
@@ -116,7 +117,7 @@ export function buildAlerts(
       id: "nc30",
       message: `${kpis.noContact30} leadów nie miało kontaktu od ponad 30 dni`,
       severity: "danger",
-      href: "/drilldown?type=no_contact_30",
+      href: drilldownHref("no_contact_30", basePath),
     });
   }
 
@@ -127,7 +128,7 @@ export function buildAlerts(
       id: "no-result",
       message: `${noResult} wykonanych wydarzeń nie ma określonego wyniku`,
       severity: "warning",
-      href: "/drilldown?type=no_result",
+      href: drilldownHref("no_result", basePath),
     });
   }
 
@@ -140,7 +141,7 @@ export function buildAlerts(
         id: `sp-overdue-${sp.id}`,
         message: `Handlowiec ${sp.firstName} ${sp.lastName} ma ${overdue} wydarzeń po terminie`,
         severity: "danger",
-        href: salespersonHref(sp.id),
+        href: salespersonHref(sp.id, basePath),
       });
     }
   }
@@ -157,7 +158,7 @@ export function buildAlerts(
       id: `multi-${a.id}`,
       message: `Spotkanie z firmą ${lead.companyName} było przekładane ${a.rescheduleCount} razy`,
       severity: "warning",
-      href: leadHref(lead.id),
+      href: leadHref(lead.id, basePath),
     });
   }
 
