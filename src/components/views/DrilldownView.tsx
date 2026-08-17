@@ -2,21 +2,18 @@
 
 import { useMemo } from "react";
 import Link from "next/link";
-import type { ColumnDef } from "@tanstack/react-table";
 import { useFilters } from "@/contexts/FilterContext";
 import type { AppData } from "@/lib/data/load";
 import { resolveDrilldown } from "@/lib/analytics/kpi";
-import type { Activity, DrilldownType, Lead } from "@/types/domain";
+import type { DrilldownType } from "@/types/domain";
 import { DataTable } from "@/components/DataTable";
 import { ExportCsvButton } from "@/components/ExportCsvButton";
-import { CrmLink } from "@/components/CrmLink";
-import { formatPlDateTime } from "@/lib/dates";
-import { leadHref } from "@/lib/paths";
 import {
-  ACTIVITY_STATUS_LABELS,
-  ACTIVITY_TYPE_LABELS,
-  LEAD_STATUS_LABELS,
-} from "@/types/enums";
+  activityDrilldownCsvRows,
+  buildActivityDrilldownColumns,
+  buildLeadDrilldownColumns,
+  leadDrilldownCsvRows,
+} from "@/lib/drilldownColumns";
 
 const TITLES: Record<DrilldownType, string> = {
   planned: "Zaplanowane aktywności",
@@ -47,7 +44,6 @@ export function DrilldownView({
 }) {
   const { filters, today, setFilters } = useFilters();
 
-  // Apply salesperson override from query once into local filter copy
   const effectiveFilters = useMemo(() => {
     if (salespersonId) {
       return { ...filters, salespersonId };
@@ -67,104 +63,20 @@ export function DrilldownView({
     [type, data, effectiveFilters, today],
   );
 
-  const leadColumns = useMemo<ColumnDef<Lead>[]>(
-    () => [
-      {
-        accessorKey: "companyName",
-        header: "Kontakt",
-        cell: ({ row }) => (
-          <Link
-            href={leadHref(row.original.id)}
-            className="font-medium hover:underline"
-          >
-            {row.original.companyName}
-          </Link>
-        ),
-      },
-      {
-        id: "sp",
-        accessorFn: (l) => {
-          const sp = data.salespeople.find((s) => s.id === l.salespersonId);
-          return sp ? `${sp.firstName} ${sp.lastName}` : "—";
-        },
-        header: "Handlowiec",
-      },
-      {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ getValue }) =>
-          LEAD_STATUS_LABELS[getValue() as keyof typeof LEAD_STATUS_LABELS],
-      },
-      {
-        accessorKey: "lastContactAt",
-        header: "Ostatni kontakt",
-        cell: ({ getValue }) => formatPlDateTime(getValue<string | null>()),
-      },
-    ],
-    [data.salespeople],
+  const leadColumns = useMemo(
+    () => buildLeadDrilldownColumns(type, data.salespeople),
+    [type, data.salespeople],
   );
 
-  const activityColumns = useMemo<ColumnDef<Activity>[]>(
-    () => [
-      {
-        id: "company",
-        accessorFn: (a) =>
-          data.leads.find((l) => l.id === a.leadId)?.companyName ?? "—",
-        header: "Kontakt",
-        cell: ({ row }) => (
-          <Link
-            href={leadHref(row.original.leadId)}
-            className="font-medium hover:underline"
-          >
-            {data.leads.find((l) => l.id === row.original.leadId)?.companyName ??
-              "—"}
-          </Link>
-        ),
-      },
-      {
-        accessorKey: "type",
-        header: "Typ",
-        cell: ({ getValue }) =>
-          ACTIVITY_TYPE_LABELS[getValue() as keyof typeof ACTIVITY_TYPE_LABELS],
-      },
-      {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ row }) => (
-          <div>
-            {
-              ACTIVITY_STATUS_LABELS[
-                row.original.status as keyof typeof ACTIVITY_STATUS_LABELS
-              ]
-            }
-            <CrmLink href={row.original.crmUrl} className="mt-1" />
-          </div>
-        ),
-      },
-      {
-        accessorKey: "currentPlannedAt",
-        header: "Termin",
-        cell: ({ getValue }) => formatPlDateTime(getValue<string>()),
-      },
-      { accessorKey: "rescheduleCount", header: "Przełożenia" },
-    ],
-    [data.leads],
+  const activityColumns = useMemo(
+    () => buildActivityDrilldownColumns(type, data.leads, data.salespeople),
+    [type, data.leads, data.salespeople],
   );
 
   const csvRows =
     result.kind === "leads"
-      ? result.leads.map((l) => ({
-          Kontakt: l.companyName,
-          Status: LEAD_STATUS_LABELS[l.status],
-          "Ostatni kontakt": l.lastContactAt ?? "",
-        }))
-      : result.activities.map((a) => ({
-          Kontakt:
-            data.leads.find((l) => l.id === a.leadId)?.companyName ?? "",
-          Typ: ACTIVITY_TYPE_LABELS[a.type],
-          Status: ACTIVITY_STATUS_LABELS[a.status],
-          Termin: a.currentPlannedAt,
-        }));
+      ? leadDrilldownCsvRows(type, result.leads, data.salespeople)
+      : activityDrilldownCsvRows(type, result.activities, data.leads, data.salespeople);
 
   return (
     <div className="space-y-4">
