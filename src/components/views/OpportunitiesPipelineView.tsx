@@ -11,7 +11,7 @@ import { formatPlDate } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 import { opportunityStats, type SalesOpportunity } from "@/types/pipeline";
 
-type Chip = "open" | "overdue" | "on_track" | "all";
+type Chip = "open" | "overdue" | "on_track";
 
 function truncate(text: string, max = 48): string {
   const t = text.trim();
@@ -39,8 +39,6 @@ export function OpportunitiesPipelineView({ data }: { data: AppData }) {
         return scoped.filter((r) => !r.closed && r.overdue);
       case "on_track":
         return scoped.filter((r) => !r.closed && !r.overdue);
-      case "all":
-        return scoped;
       default:
         return scoped.filter((r) => !r.closed);
     }
@@ -113,8 +111,8 @@ export function OpportunitiesPipelineView({ data }: { data: AppData }) {
       <div>
         <h1 className="page-title">Szanse sprzedaży</h1>
         <p className="page-subtitle">
-          Szanse podpięte pod kontrahentów. Po terminie oczekiwanej daty zamknięcia — czerwone, do
-          pilnego działania.
+          Tylko otwarte szanse (bez Closed Won / Closed Lost). Po terminie oczekiwanej daty
+          zamknięcia — czerwone, do pilnego działania.
         </p>
       </div>
 
@@ -134,7 +132,6 @@ export function OpportunitiesPipelineView({ data }: { data: AppData }) {
             ["open", `Otwarte (${stats.open})`],
             ["overdue", `Po terminie (${stats.overdue})`],
             ["on_track", `W terminie (${stats.onTrack})`],
-            ["all", `Wszystkie (${scoped.length})`],
           ] as const
         ).map(([id, label]) => (
           <button
