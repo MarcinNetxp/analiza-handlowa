@@ -1,10 +1,9 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginForm() {
-  const router = useRouter();
   const params = useSearchParams();
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -20,6 +19,7 @@ export default function LoginForm() {
     const res = await fetch("/api/auth/manager", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify({ password }),
     });
     setLoading(false);
@@ -28,8 +28,8 @@ export default function LoginForm() {
       setError(body.error ?? "Logowanie nie powiodło się.");
       return;
     }
-    router.push(next.startsWith("/") ? next : "/");
-    router.refresh();
+    const dest = next.startsWith("/") && !next.startsWith("//") ? next : "/";
+    window.location.assign(dest);
   }
 
   return (

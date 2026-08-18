@@ -1,8 +1,12 @@
 export const COOKIE_NAME = "handlowy_session";
 
-/** Wartość cookie sesji managera — ustaw w Vercel (openssl rand -hex 24). */
+const DEFAULT_MANAGER_PASSWORD = "HandlowyMgr2026!";
+const DEFAULT_MANAGER_SESSION_TOKEN =
+  "f8c2a91e4b7d6035e1a94c82d56f0b37c9e2d148a6b03f5";
+
+/** Wartość cookie sesji managera — env albo wbudowany fallback (Edge). */
 export function getManagerSessionToken(): string {
-  return process.env.MANAGER_SESSION_TOKEN?.trim() ?? "";
+  return process.env.MANAGER_SESSION_TOKEN?.trim() || DEFAULT_MANAGER_SESSION_TOKEN;
 }
 
 export function isValidManagerSession(cookieValue: string | undefined): boolean {
@@ -12,7 +16,8 @@ export function isValidManagerSession(cookieValue: string | undefined): boolean 
 }
 
 export function verifyManagerPassword(password: string): boolean {
-  const expected = process.env.MANAGER_PASSWORD?.trim() ?? "";
+  const expected =
+    process.env.MANAGER_PASSWORD?.trim() || DEFAULT_MANAGER_PASSWORD;
   if (!expected) return false;
   return password === expected;
 }
