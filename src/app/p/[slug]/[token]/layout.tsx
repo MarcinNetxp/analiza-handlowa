@@ -5,6 +5,7 @@ import { portalBasePath } from "@/lib/portal/config";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+export const maxDuration = 60;
 
 export default async function PortalLayout({
   children,

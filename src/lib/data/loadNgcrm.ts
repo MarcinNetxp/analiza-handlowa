@@ -10,6 +10,7 @@ export async function buildDatasetFromNgcrm(): Promise<AppData> {
   const res = await fetch(`${NGCRM_API_URL}/handlowy/bff/dataset`, {
     headers,
     cache: "no-store",
+    signal: AbortSignal.timeout(20_000),
   });
 
   if (!res.ok) {

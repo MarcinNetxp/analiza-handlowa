@@ -2,6 +2,7 @@ import { AppShell } from "@/components/AppShell";
 import { loadAppData } from "@/lib/data/load";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 export const revalidate = 0;
 
 export default async function ManagerLayout({
