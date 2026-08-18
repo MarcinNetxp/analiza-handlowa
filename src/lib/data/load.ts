@@ -4,12 +4,15 @@ import { buildDatasetFromCrm } from "@/lib/crm/buildDataset";
 import { buildDatasetFromNgcrm } from "@/lib/data/loadNgcrm";
 import { getMockDataset } from "@/data/mock/store";
 import type { Activity, Lead, Salesperson } from "@/types/domain";
+import type { PotentialClient, SalesOpportunity } from "@/types/pipeline";
 import type { DataSource } from "@/config/dataSource";
 
 export interface AppData {
   salespeople: Salesperson[];
   leads: Lead[];
   activities: Activity[];
+  potentialClients: PotentialClient[];
+  opportunities: SalesOpportunity[];
   today: string;
   dataSource: DataSource;
   crmConfigured: boolean;
@@ -30,6 +33,8 @@ export const loadAppData = cache(async function loadAppData(): Promise<AppData> 
         salespeople: [],
         leads: [],
         activities: [],
+        potentialClients: [],
+        opportunities: [],
         today: new Date().toISOString(),
         dataSource: "ngcrm",
         crmConfigured: false,
@@ -49,6 +54,8 @@ export const loadAppData = cache(async function loadAppData(): Promise<AppData> 
         salespeople: [],
         leads: [],
         activities: [],
+        potentialClients: [],
+        opportunities: [],
         today: new Date().toISOString(),
         dataSource: "api",
         crmConfigured: false,
@@ -62,6 +69,8 @@ export const loadAppData = cache(async function loadAppData(): Promise<AppData> 
     salespeople: mock.salespeople,
     leads: mock.leads,
     activities: mock.activities,
+    potentialClients: [],
+    opportunities: [],
     today: mock.referenceDate,
     dataSource: "mock",
     crmConfigured: false,

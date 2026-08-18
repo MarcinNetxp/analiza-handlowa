@@ -26,6 +26,8 @@ export const loadPortalContext = cache(async function loadPortalContext(
         salespeople: [],
         leads: [],
         activities: [],
+        potentialClients: [],
+        opportunities: [],
       },
       loadError:
         full.loadError ??

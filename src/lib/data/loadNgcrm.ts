@@ -25,6 +25,8 @@ export async function buildDatasetFromNgcrm(): Promise<AppData> {
     salespeople: payload.salespeople ?? [],
     leads: payload.leads ?? [],
     activities: payload.activities ?? [],
+    potentialClients: payload.potentialClients ?? [],
+    opportunities: payload.opportunities ?? [],
     today: payload.today ?? new Date().toISOString(),
     dataSource: "ngcrm",
     crmConfigured: payload.crmConfigured ?? true,

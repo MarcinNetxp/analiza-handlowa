@@ -15,10 +15,12 @@ export function DataTable<T>({
   data,
   columns,
   onRowClick,
+  rowClassName,
 }: {
   data: T[];
   columns: ColumnDef<T, unknown>[];
   onRowClick?: (row: T) => void;
+  rowClassName?: (row: T) => string | undefined;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const table = useReactTable({
@@ -82,6 +84,7 @@ export function DataTable<T>({
                 className={cn(
                   "border-t border-slate-100",
                   onRowClick && "cursor-pointer hover:bg-slate-50",
+                  rowClassName?.(row.original),
                 )}
                 onClick={() => onRowClick?.(row.original)}
               >

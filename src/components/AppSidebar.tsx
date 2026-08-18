@@ -9,6 +9,8 @@ import { joinAppPath } from "@/lib/paths";
 const MANAGER_NAV = [
   { href: "/", label: "Pulpit" },
   { href: "/salespeople", label: "Handlowcy" },
+  { href: "/potencjalni", label: "Potencjalni klienci" },
+  { href: "/szanse", label: "Szanse sprzedaży" },
   { href: "/activities", label: "Aktywności" },
   { href: "/attention", label: "Klienci wymagający uwagi" },
   { href: "/quality", label: "Jakość obsługi" },
@@ -18,6 +20,8 @@ const MANAGER_NAV = [
 const PORTAL_NAV = [
   { href: "/", label: "Pulpit" },
   { href: "/handlowcy", label: "Handlowcy" },
+  { href: "/potencjalni", label: "Potencjalni klienci" },
+  { href: "/szanse", label: "Szanse sprzedaży" },
   { href: "/activities", label: "Aktywności" },
   { href: "/attention", label: "Klienci wymagający uwagi" },
   { href: "/effectiveness", label: "Skuteczność" },

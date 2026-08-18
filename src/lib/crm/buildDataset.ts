@@ -89,6 +89,8 @@ export async function buildDatasetFromCrm(): Promise<AppData> {
     ),
     leads: [...leadsMap.values()],
     activities,
+    potentialClients: [],
+    opportunities: [],
     today: new Date().toISOString(),
     dataSource: "api",
     crmConfigured: true,

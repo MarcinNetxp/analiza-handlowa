@@ -19,11 +19,15 @@ export function findSalespersonByPortalSlug(
   const targetFirst = norm(person.firstName);
   const targetLast = norm(person.lastName);
 
+  const targetEmail = person.email ? norm(person.email) : "";
+
   return (
     data.salespeople.find(
       (sp) =>
         norm(sp.firstName) === targetFirst && norm(sp.lastName) === targetLast,
-    ) ?? null
+    ) ??
+    data.salespeople.find((sp) => targetEmail && norm(sp.email) === targetEmail) ??
+    null
   );
 }
 
@@ -36,5 +40,11 @@ export function filterAppDataForSalesperson(
     salespeople: data.salespeople.filter((s) => s.id === salespersonId),
     leads: data.leads.filter((l) => l.salespersonId === salespersonId),
     activities: data.activities.filter((a) => a.salespersonId === salespersonId),
+    potentialClients: (data.potentialClients ?? []).filter(
+      (p) => p.salespersonId === salespersonId,
+    ),
+    opportunities: (data.opportunities ?? []).filter(
+      (o) => o.salespersonId === salespersonId,
+    ),
   };
 }

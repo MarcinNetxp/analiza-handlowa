@@ -11,7 +11,11 @@ import {
 import { AlertPanel } from "@/components/AlertPanel";
 import { KpiCard } from "@/components/KpiCard";
 import { formatPercent } from "@/lib/utils";
-import { drilldownHref } from "@/lib/paths";
+import { drilldownHref, joinAppPath } from "@/lib/paths";
+import {
+  opportunityStats,
+  potentialClientStats,
+} from "@/types/pipeline";
 
 export function DashboardView({
   data,
@@ -43,7 +47,25 @@ export function DashboardView({
     [data, filters],
   );
 
+  const leadStats = useMemo(() => {
+    let rows = data.potentialClients ?? [];
+    if (filters.salespersonId !== "all") {
+      rows = rows.filter((r) => r.salespersonId === filters.salespersonId);
+    }
+    return potentialClientStats(rows);
+  }, [data.potentialClients, filters.salespersonId]);
+
+  const oppStats = useMemo(() => {
+    let rows = data.opportunities ?? [];
+    if (filters.salespersonId !== "all") {
+      rows = rows.filter((r) => r.salespersonId === filters.salespersonId);
+    }
+    return opportunityStats(rows);
+  }, [data.opportunities, filters.salespersonId]);
+
   const dd = (type: string) => drilldownHref(type, basePath);
+  const toPotencjalni = joinAppPath(basePath, "/potencjalni");
+  const toSzanse = joinAppPath(basePath, "/szanse");
 
   return (
     <div className="space-y-5">
@@ -51,12 +73,42 @@ export function DashboardView({
         <h1 className="page-title">Pulpit</h1>
         <p className="page-subtitle">
           {basePath
-            ? "Twoje KPI aktywności i obsługi leadów — dane na bieżąco z CRM."
+            ? "Twoje KPI: potencjalni klienci, szanse sprzedaży i aktywności — dane na bieżąco z CRM."
             : "Czy zespół realizuje zaplanowaną pracę i regularnie obsługuje leady?"}
         </p>
       </div>
 
       <AlertPanel alerts={alerts} />
+
+      <div>
+        <h2 className="section-title mb-3">Potencjalni klienci</h2>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+          <KpiCard label="Do obsługi" value={leadStats.assigned} href={toPotencjalni} />
+          <KpiCard label="Zimni" value={leadStats.cold} href={toPotencjalni} />
+          <KpiCard label="Ciepli" value={leadStats.warm} href={toPotencjalni} tone="ok" />
+          <KpiCard label="Z kontaktem" value={leadStats.withContact} href={toPotencjalni} tone="ok" />
+          <KpiCard
+            label="Bez kontaktu"
+            value={leadStats.withoutContact}
+            href={toPotencjalni}
+            tone={leadStats.withoutContact > 0 ? "danger" : "ok"}
+          />
+        </div>
+      </div>
+
+      <div>
+        <h2 className="section-title mb-3">Szanse sprzedaży</h2>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <KpiCard label="Otwarte" value={oppStats.open} href={toSzanse} />
+          <KpiCard label="W terminie" value={oppStats.onTrack} href={toSzanse} tone="ok" />
+          <KpiCard
+            label="Po terminie zamknięcia"
+            value={oppStats.overdue}
+            href={toSzanse}
+            tone={oppStats.overdue > 0 ? "danger" : "ok"}
+          />
+        </div>
+      </div>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <KpiCard label="Aktywne leady" value={kpis.activeLeads} href={dd("active_leads")} />
