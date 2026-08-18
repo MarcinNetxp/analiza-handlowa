@@ -1,22 +1,16 @@
-/** Zdefiniowani handlowcy z dostępem do portalu (token w env). */
+/** Zdefiniowani handlowcy objęci analizą (portal + widok managera). */
 export const PORTAL_SALESPEOPLE = [
+  {
+    slug: "lukasz-bogucki",
+    firstName: "Łukasz",
+    lastName: "Bogucki",
+    email: "lukasz.bogucki@netxp.pl",
+  },
   {
     slug: "adrian-nowicki",
     firstName: "Adrian",
     lastName: "Nowicki",
     email: "adrian.nowicki@netxp.pl",
-  },
-  {
-    slug: "artur-zbrozyna",
-    firstName: "Artur",
-    lastName: "Zbrożyna",
-    email: "artur.zbrozyna@netxp.pl",
-  },
-  {
-    slug: "marcin-karolkiewicz",
-    firstName: "Marcin",
-    lastName: "Karolkiewicz",
-    email: "marcin.karolkiewicz@netxp.pl",
   },
   {
     slug: "damian-swiecak",
@@ -25,16 +19,29 @@ export const PORTAL_SALESPEOPLE = [
     email: "damian.swiecak@netxp.pl",
   },
   {
-    slug: "izabela-wojciechowska",
-    firstName: "Izabela",
-    lastName: "Wojciechowska",
-    email: "izabela.wojciechowska@netxp.pl",
+    slug: "marcin-karolkiewicz",
+    firstName: "Marcin",
+    lastName: "Karolkiewicz",
+    email: "marcin.karolkiewicz@netxp.pl",
+  },
+  {
+    slug: "artur-zbrozyna",
+    firstName: "Artur",
+    lastName: "Zbrożyna",
+    email: "artur.zbrozyna@netxp.pl",
   },
   {
     slug: "jacek-zielinski",
     firstName: "Jacek",
-    lastName: "Zieliński",
+    lastName: "Ziółkowski",
+    lastNameAliases: ["Zieliński"],
     email: "jacek.zielinski@netxp.pl",
+  },
+  {
+    slug: "izabela-wojciechowska",
+    firstName: "Izabela",
+    lastName: "Wojciechowska",
+    email: "izabela.wojciechowska@netxp.pl",
   },
   {
     slug: "dariusz-krzesniak",
@@ -42,15 +49,50 @@ export const PORTAL_SALESPEOPLE = [
     lastName: "Krześniak",
     email: "dariusz.krzesniak@netxp.pl",
   },
-  {
-    slug: "lukasz-bogucki",
-    firstName: "Łukasz",
-    lastName: "Bogucki",
-    email: "lukasz.bogucki@netxp.pl",
-  },
 ] as const;
 
 export type PortalSlug = (typeof PORTAL_SALESPEOPLE)[number]["slug"];
+
+export type PortalPerson = (typeof PORTAL_SALESPEOPLE)[number];
+
+/** Porównanie imion/nazwisk PL (ł nie rozpada się w NFD). */
+export function foldPersonName(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .replace(/[łŁ]/g, "l")
+    .toLowerCase()
+    .trim();
+}
+
+export function lastNamesOf(person: PortalPerson): string[] {
+  const aliases =
+    "lastNameAliases" in person && Array.isArray(person.lastNameAliases)
+      ? person.lastNameAliases
+      : [];
+  return [person.lastName, ...aliases];
+}
+
+export function matchesPortalPerson(
+  person: PortalPerson,
+  candidate: { firstName: string; lastName: string; email?: string },
+): boolean {
+  const email = foldPersonName(person.email);
+  const candEmail = foldPersonName(candidate.email ?? "");
+  if (
+    email &&
+    candEmail &&
+    candEmail === email &&
+    !candEmail.endsWith("@crm.local")
+  ) {
+    return true;
+  }
+  if (foldPersonName(candidate.firstName) !== foldPersonName(person.firstName)) {
+    return false;
+  }
+  const last = foldPersonName(candidate.lastName);
+  return lastNamesOf(person).some((n) => foldPersonName(n) === last);
+}
 
 /** Fallback, gdy env Edge nie wczyta HANDLOWY_PORTAL_TOKENS. */
 const DEFAULT_PORTAL_TOKENS: Record<string, string> = {

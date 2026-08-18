@@ -16,7 +16,13 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 type Chip = "all" | "cold" | "warm" | "contact" | "no_contact";
 
-export function PotentialClientsView({ data }: { data: AppData }) {
+export function PotentialClientsView({
+  data,
+  showSalespersonColumn = false,
+}: {
+  data: AppData;
+  showSalespersonColumn?: boolean;
+}) {
   const { filters } = useFilters();
   const [chip, setChip] = useState<Chip>("all");
 
@@ -58,6 +64,14 @@ export function PotentialClientsView({ data }: { data: AppData }) {
           </div>
         ),
       },
+      ...(showSalespersonColumn
+        ? [
+            {
+              accessorKey: "salespersonName",
+              header: "Handlowiec",
+            } satisfies ColumnDef<PotentialClient>,
+          ]
+        : []),
       {
         accessorKey: "temperature",
         header: "Rodzaj",
@@ -88,7 +102,7 @@ export function PotentialClientsView({ data }: { data: AppData }) {
         cell: ({ getValue }) => formatPlDate(getValue<string | null>()),
       },
     ],
-    [],
+    [showSalespersonColumn],
   );
 
   return (

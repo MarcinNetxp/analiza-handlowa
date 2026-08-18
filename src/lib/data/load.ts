@@ -6,6 +6,7 @@ import { getMockDataset } from "@/data/mock/store";
 import type { Activity, Lead, Salesperson } from "@/types/domain";
 import type { PotentialClient, SalesOpportunity } from "@/types/pipeline";
 import type { DataSource } from "@/config/dataSource";
+import { filterAppDataForAnalyzedTeam } from "@/lib/portal/filterData";
 
 export interface AppData {
   salespeople: Salesperson[];
@@ -24,7 +25,7 @@ export const loadAppData = cache(async function loadAppData(): Promise<AppData> 
 
   if (source === "ngcrm") {
     try {
-      return await buildDatasetFromNgcrm();
+      return filterAppDataForAnalyzedTeam(await buildDatasetFromNgcrm());
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Nieznany błąd ładowania ngCRM BFF";
@@ -45,7 +46,7 @@ export const loadAppData = cache(async function loadAppData(): Promise<AppData> 
 
   if (source === "api") {
     try {
-      return await buildDatasetFromCrm();
+      return filterAppDataForAnalyzedTeam(await buildDatasetFromCrm());
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Nieznany błąd ładowania CRM";

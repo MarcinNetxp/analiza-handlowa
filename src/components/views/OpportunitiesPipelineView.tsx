@@ -19,7 +19,13 @@ function truncate(text: string, max = 48): string {
   return `${t.slice(0, max - 1)}…`;
 }
 
-export function OpportunitiesPipelineView({ data }: { data: AppData }) {
+export function OpportunitiesPipelineView({
+  data,
+  showSalespersonColumn = false,
+}: {
+  data: AppData;
+  showSalespersonColumn?: boolean;
+}) {
   const { filters } = useFilters();
   const [chip, setChip] = useState<Chip>("open");
 
@@ -72,6 +78,14 @@ export function OpportunitiesPipelineView({ data }: { data: AppData }) {
           </div>
         ),
       },
+      ...(showSalespersonColumn
+        ? [
+            {
+              accessorKey: "salespersonName",
+              header: "Handlowiec",
+            } satisfies ColumnDef<SalesOpportunity>,
+          ]
+        : []),
       {
         accessorKey: "createdAt",
         header: "Data utworzenia",
@@ -103,7 +117,7 @@ export function OpportunitiesPipelineView({ data }: { data: AppData }) {
         ),
       },
     ],
-    [],
+    [showSalespersonColumn],
   );
 
   return (
