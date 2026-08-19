@@ -71,8 +71,8 @@ export function resolveStatusGroup(row: PotentialClient): LeadStatusGroup {
   ) {
     return "in_handling";
   }
-  if (["odrzucony", "rejected", "dead", "recycled"].includes(key)) return "rejected";
-  if (["do ponownego kontaktu", "ponowny kontakt"].includes(key)) {
+  if (["odrzucony", "rejected", "dead"].includes(key)) return "rejected";
+  if (["do ponownego kontaktu", "ponowny kontakt", "recycled"].includes(key)) {
     return "recontact";
   }
   if (["nieaktywny", "inactive"].includes(key)) return "inactive";
@@ -86,7 +86,7 @@ const CRM_STATUS_LABELS: Record<string, string> = {
   assigned: "W trakcie obsługi",
   "in process": "W trakcie obsługi",
   in_process: "W trakcie obsługi",
-  recycled: "Odrzucony",
+  recycled: "Do ponownego kontaktu",
   dead: "Odrzucony",
   rejected: "Odrzucony",
   converted: "Przekonwertowany",
