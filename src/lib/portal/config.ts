@@ -31,11 +31,12 @@ export const PORTAL_SALESPEOPLE = [
     email: "artur.zbrozyna@netxp.pl",
   },
   {
-    slug: "jacek-zielinski",
+    slug: "jacek-ziolkowski",
+    slugAliases: ["jacek-zielinski"],
     firstName: "Jacek",
     lastName: "Ziółkowski",
     lastNameAliases: ["Zieliński"],
-    email: "jacek.zielinski@netxp.pl",
+    email: "jacek.ziolkowski@netxp.pl",
   },
   {
     slug: "izabela-wojciechowska",
@@ -101,13 +102,28 @@ const DEFAULT_PORTAL_TOKENS: Record<string, string> = {
   "marcin-karolkiewicz": "ac8b618c582b6cca",
   "damian-swiecak": "a0d516543883de0a",
   "izabela-wojciechowska": "1d475a9c0a0077d0",
+  "jacek-ziolkowski": "c14c9c067ae68ea0",
   "jacek-zielinski": "c14c9c067ae68ea0",
   "dariusz-krzesniak": "25a82613a05a2d29",
   "lukasz-bogucki": "b7e19c4a62f08d15",
 };
 
 export function portalPersonBySlug(slug: string) {
-  return PORTAL_SALESPEOPLE.find((p) => p.slug === slug) ?? null;
+  const key = slug.toLowerCase();
+  return (
+    PORTAL_SALESPEOPLE.find((p) => p.slug === key) ??
+    PORTAL_SALESPEOPLE.find(
+      (p) =>
+        "slugAliases" in p &&
+        Array.isArray(p.slugAliases) &&
+        p.slugAliases.includes(key),
+    ) ??
+    null
+  );
+}
+
+export function canonicalPortalSlug(slug: string): string | null {
+  return portalPersonBySlug(slug)?.slug ?? null;
 }
 
 /** JSON map slug → token, np. {"adrian-nowicki":"a1b2c3..."} */

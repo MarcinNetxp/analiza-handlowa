@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { COOKIE_NAME, isValidManagerSession } from "@/lib/auth/session";
-import { validatePortalCredentials } from "@/lib/portal/config";
+import { validatePortalCredentials, canonicalPortalSlug } from "@/lib/portal/config";
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -24,6 +24,12 @@ export function middleware(request: NextRequest) {
       const url = request.nextUrl.clone();
       url.pathname = "/login";
       url.searchParams.set("error", "portal");
+      return NextResponse.redirect(url);
+    }
+    const canonical = canonicalPortalSlug(slug);
+    if (canonical && canonical !== slug.toLowerCase()) {
+      const url = request.nextUrl.clone();
+      url.pathname = pathname.replace(`/p/${slug}/`, `/p/${canonical}/`);
       return NextResponse.redirect(url);
     }
     return NextResponse.next();
