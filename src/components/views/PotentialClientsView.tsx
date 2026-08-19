@@ -9,6 +9,7 @@ import { KpiCard } from "@/components/KpiCard";
 import { formatPlDate } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 import {
+  crmStatusLabel,
   potentialClientStats,
   resolveStatusGroup,
   type PotentialClient,
@@ -99,6 +100,7 @@ export function PotentialClientsView({
       {
         accessorKey: "status",
         header: "Status CRM",
+        cell: ({ getValue }) => crmStatusLabel(String(getValue() ?? "")),
       },
       {
         accessorKey: "hasContact",

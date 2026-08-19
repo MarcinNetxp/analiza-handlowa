@@ -61,7 +61,6 @@ function foldStatus(value: string): string {
 }
 
 export function resolveStatusGroup(row: PotentialClient): LeadStatusGroup {
-  if (row.statusGroup) return row.statusGroup;
   if (row.converted) return "converted";
   const key = foldStatus(row.status);
   if (["nowy", "new"].includes(key)) return "new";
@@ -72,13 +71,31 @@ export function resolveStatusGroup(row: PotentialClient): LeadStatusGroup {
   ) {
     return "in_handling";
   }
-  if (["odrzucony", "rejected", "dead"].includes(key)) return "rejected";
-  if (["do ponownego kontaktu", "ponowny kontakt", "recycled"].includes(key)) {
+  if (["odrzucony", "rejected", "dead", "recycled"].includes(key)) return "rejected";
+  if (["do ponownego kontaktu", "ponowny kontakt"].includes(key)) {
     return "recontact";
   }
   if (["nieaktywny", "inactive"].includes(key)) return "inactive";
+  if (row.statusGroup) return row.statusGroup;
   if (row.inHandling) return "in_handling";
   return "other";
+}
+
+const CRM_STATUS_LABELS: Record<string, string> = {
+  new: "Nowy",
+  assigned: "W trakcie obsługi",
+  "in process": "W trakcie obsługi",
+  in_process: "W trakcie obsługi",
+  recycled: "Odrzucony",
+  dead: "Odrzucony",
+  rejected: "Odrzucony",
+  converted: "Przekonwertowany",
+  inactive: "Nieaktywny",
+};
+
+/** Angielskie statusy SuiteCRM pokazujemy po polsku; polskie zostawiamy jak w CRM. */
+export function crmStatusLabel(status: string): string {
+  return CRM_STATUS_LABELS[foldStatus(status)] ?? status;
 }
 
 export function potentialClientStats(rows: PotentialClient[]) {
