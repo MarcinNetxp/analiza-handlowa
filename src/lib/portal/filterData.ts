@@ -59,6 +59,15 @@ function isAnalyzedFullName(fullName: string): boolean {
   return PORTAL_SALESPEOPLE.some((p) => matchesPortalPerson(p, cand));
 }
 
+function isAnalyzedAssignee(name: string | undefined): boolean {
+  if (!name) return false;
+  const folded = foldPersonName(name);
+  if (PORTAL_SALESPEOPLE.some((p) => foldPersonName(p.email) === folded)) {
+    return true;
+  }
+  return isAnalyzedFullName(name);
+}
+
 /** Widok managera: tylko ustalona ósemka handlowców, bez adminów i innych ról CRM. */
 export function filterAppDataForAnalyzedTeam(data: AppData): AppData {
   const allowedIds = new Set<string>();
@@ -74,7 +83,7 @@ export function filterAppDataForAnalyzedTeam(data: AppData): AppData {
     name: string | undefined,
   ) => {
     if (id && allowedIds.has(id)) return;
-    if (name && isAnalyzedFullName(name) && id) allowedIds.add(id);
+    if (name && isAnalyzedAssignee(name) && id) allowedIds.add(id);
   };
 
   for (const row of data.potentialClients ?? []) {
@@ -117,8 +126,8 @@ export function filterAppDataForAnalyzedTeam(data: AppData): AppData {
     salespeople,
     leads: data.leads.filter((l) => allowedIds.has(l.salespersonId)),
     activities: data.activities.filter((a) => allowedIds.has(a.salespersonId)),
-    potentialClients: (data.potentialClients ?? []).filter((p) =>
-      allowedIds.has(p.salespersonId),
+    potentialClients: (data.potentialClients ?? []).filter(
+      (p) => allowedIds.has(p.salespersonId) || isAnalyzedAssignee(p.salespersonName),
     ),
     opportunities: (data.opportunities ?? []).filter((o) =>
       allowedIds.has(o.salespersonId),

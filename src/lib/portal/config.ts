@@ -88,6 +88,9 @@ export function matchesPortalPerson(
   ) {
     return true;
   }
+  if (email && foldPersonName(candidate.firstName) === email) {
+    return true;
+  }
   if (foldPersonName(candidate.firstName) !== foldPersonName(person.firstName)) {
     return false;
   }
