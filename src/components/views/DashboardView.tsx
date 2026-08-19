@@ -82,8 +82,11 @@ export function DashboardView({
 
       <div>
         <h2 className="section-title mb-3">Potencjalni klienci</h2>
-        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <KpiCard label="Do obsługi" value={leadStats.assigned} href={toPotencjalni} />
+          <KpiCard label="Odrzucony" value={leadStats.rejected} href={toPotencjalni} />
+          <KpiCard label="Do ponownego kontaktu" value={leadStats.recontact} href={toPotencjalni} />
+          <KpiCard label="Nieaktywny" value={leadStats.inactive} href={toPotencjalni} />
           <KpiCard label="Zimni" value={leadStats.cold} href={toPotencjalni} />
           <KpiCard label="Ciepli" value={leadStats.warm} href={toPotencjalni} tone="ok" />
           <KpiCard label="Z kontaktem" value={leadStats.withContact} href={toPotencjalni} tone="ok" />

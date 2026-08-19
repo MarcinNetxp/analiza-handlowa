@@ -10,11 +10,21 @@ import { formatPlDate } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 import {
   potentialClientStats,
+  resolveStatusGroup,
   type PotentialClient,
 } from "@/types/pipeline";
 import type { ColumnDef } from "@tanstack/react-table";
 
-type Chip = "all" | "cold" | "warm" | "contact" | "no_contact";
+type Chip =
+  | "all"
+  | "handling"
+  | "rejected"
+  | "recontact"
+  | "inactive"
+  | "cold"
+  | "warm"
+  | "contact"
+  | "no_contact";
 
 export function PotentialClientsView({
   data,
@@ -27,7 +37,7 @@ export function PotentialClientsView({
   const [chip, setChip] = useState<Chip>("all");
 
   const assigned = useMemo(() => {
-    let rows = (data.potentialClients ?? []).filter((r) => r.inHandling);
+    let rows = (data.potentialClients ?? []).filter((r) => !r.converted);
     if (filters.salespersonId !== "all") {
       rows = rows.filter((r) => r.salespersonId === filters.salespersonId);
     }
@@ -38,14 +48,22 @@ export function PotentialClientsView({
 
   const rows = useMemo(() => {
     switch (chip) {
+      case "handling":
+        return assigned.filter((r) => r.inHandling);
+      case "rejected":
+        return assigned.filter((r) => resolveStatusGroup(r) === "rejected");
+      case "recontact":
+        return assigned.filter((r) => resolveStatusGroup(r) === "recontact");
+      case "inactive":
+        return assigned.filter((r) => resolveStatusGroup(r) === "inactive");
       case "cold":
-        return assigned.filter((r) => r.temperature === "cold");
+        return assigned.filter((r) => r.inHandling && r.temperature === "cold");
       case "warm":
-        return assigned.filter((r) => r.temperature === "warm");
+        return assigned.filter((r) => r.inHandling && r.temperature === "warm");
       case "contact":
-        return assigned.filter((r) => r.hasContact);
+        return assigned.filter((r) => r.inHandling && r.hasContact);
       case "no_contact":
-        return assigned.filter((r) => !r.hasContact);
+        return assigned.filter((r) => r.inHandling && !r.hasContact);
       default:
         return assigned;
     }
@@ -110,12 +128,16 @@ export function PotentialClientsView({
       <div>
         <h1 className="page-title">Potencjalni klienci</h1>
         <p className="page-subtitle">
-          Przypisani do Ciebie w CRM. Po konwersji na Kontakt znikają z tej listy.
+          Nowy, W trakcie obsługi, Odrzucony, Do ponownego kontaktu i Nieaktywny.
+          Po konwersji na Kontakt znikają z tej listy.
         </p>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <KpiCard label="Do obsługi" value={stats.assigned} />
+        <KpiCard label="Odrzucony" value={stats.rejected} />
+        <KpiCard label="Do ponownego kontaktu" value={stats.recontact} />
+        <KpiCard label="Nieaktywny" value={stats.inactive} />
         <KpiCard label="Zimni" value={stats.cold} />
         <KpiCard label="Ciepli" value={stats.warm} tone="ok" />
         <KpiCard label="Z kontaktem" value={stats.withContact} tone="ok" />
@@ -129,7 +151,11 @@ export function PotentialClientsView({
       <div className="flex flex-wrap gap-2">
         {(
           [
-            ["all", `Wszyscy (${stats.assigned})`],
+            ["all", `Wszyscy (${stats.visible})`],
+            ["handling", `Do obsługi (${stats.assigned})`],
+            ["rejected", `Odrzucony (${stats.rejected})`],
+            ["recontact", `Do ponownego kontaktu (${stats.recontact})`],
+            ["inactive", `Nieaktywny (${stats.inactive})`],
             ["cold", `Zimni (${stats.cold})`],
             ["warm", `Ciepli (${stats.warm})`],
             ["contact", `Z kontaktem (${stats.withContact})`],
