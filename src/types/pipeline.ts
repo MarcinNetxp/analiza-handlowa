@@ -83,19 +83,45 @@ export function resolveStatusGroup(row: PotentialClient): LeadStatusGroup {
 
 const CRM_STATUS_LABELS: Record<string, string> = {
   new: "Nowy",
+  nowy: "Nowy",
   assigned: "W trakcie obsługi",
   "in process": "W trakcie obsługi",
   in_process: "W trakcie obsługi",
+  "w trakcie obslugi": "W trakcie obsługi",
+  "w trakcie": "W trakcie obsługi",
   recycled: "Do ponownego kontaktu",
+  "do ponownego kontaktu": "Do ponownego kontaktu",
+  "ponowny kontakt": "Do ponownego kontaktu",
   dead: "Odrzucony",
   rejected: "Odrzucony",
+  odrzucony: "Odrzucony",
   converted: "Przekonwertowany",
+  skonwertowany: "Przekonwertowany",
+  przekonwertowany: "Przekonwertowany",
   inactive: "Nieaktywny",
+  nieaktywny: "Nieaktywny",
 };
 
-/** Angielskie statusy SuiteCRM pokazujemy po polsku; polskie zostawiamy jak w CRM. */
-export function crmStatusLabel(status: string): string {
-  return CRM_STATUS_LABELS[foldStatus(status)] ?? status;
+const GROUP_LABELS: Record<LeadStatusGroup, string> = {
+  new: "Nowy",
+  in_handling: "W trakcie obsługi",
+  rejected: "Odrzucony",
+  recontact: "Do ponownego kontaktu",
+  inactive: "Nieaktywny",
+  converted: "Przekonwertowany",
+  other: "",
+};
+
+/** Zawsze polska etykieta z CRM — nigdy Recycled / Dead / New. */
+export function crmStatusLabel(status: string, group?: LeadStatusGroup): string {
+  const mapped = CRM_STATUS_LABELS[foldStatus(status)];
+  if (mapped) return mapped;
+  if (group && group !== "other" && GROUP_LABELS[group]) return GROUP_LABELS[group];
+  return status;
+}
+
+export function potentialClientStatusLabel(row: PotentialClient): string {
+  return crmStatusLabel(row.status, resolveStatusGroup(row));
 }
 
 export function potentialClientStats(rows: PotentialClient[]) {
